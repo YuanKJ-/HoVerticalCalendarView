@@ -16,7 +16,7 @@ class MainActivity : AppCompatActivity() {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_main)
 
-        calendar_view.setCalendarParams(createMonth(4), object : MonthView.OnDayClickListener {
+        calendar_view.setCalendarParams(createMonth(28), object : MonthView.OnDayClickListener {
             override fun onDayClick(view: MonthView, day: Calendar) {
                 val dateString = "${day.get(Calendar.YEAR)}-${day.get(Calendar.MONTH) + 1}-${day.get(Calendar.DAY_OF_MONTH)}"
                 Toast.makeText(this@MainActivity, dateString, Toast.LENGTH_SHORT).show()
@@ -34,12 +34,12 @@ class MainActivity : AppCompatActivity() {
 
     private fun createMonth(count:Int):Array<Array<Int>>{
         val calendar = Calendar.getInstance()
-        calendar.add(Calendar.MONTH,-1)
+        calendar.add(Calendar.MONTH, -count)
 
         val resultList = ArrayList<Array<Int>>()
 
-        for(i in 0 until count){
-            val item = arrayOf(calendar.get(Calendar.YEAR),calendar.get(Calendar.MONTH)+1)
+        for (i in 0 until count + 2) {
+            val item = arrayOf(calendar.get(Calendar.YEAR), calendar.get(Calendar.MONTH) + 1)
             resultList.add(item)
             calendar.add(Calendar.MONTH, 1)
         }

@@ -213,6 +213,15 @@ class MonthView @JvmOverloads constructor(
         }
     }
 
+    private fun isWeekend(dayOfMonth: Int) : Boolean {
+        var cal = Calendar.getInstance();
+        cal.set(Calendar.YEAR, calendar.get(Calendar.YEAR))
+        cal.set(Calendar.MONTH, calendar.get(Calendar.MONTH))
+        cal.set(Calendar.DAY_OF_MONTH, dayOfMonth)
+        return (cal.get(Calendar.DAY_OF_WEEK) == Calendar.SATURDAY
+                || cal.get(Calendar.DAY_OF_WEEK) == Calendar.SUNDAY)
+    }
+
     private fun dayAfterToday(dayOfMonth: Int): Boolean {
 
         if (!sameDay(dayOfMonth, Calendar.getInstance())) {
@@ -232,9 +241,9 @@ class MonthView @JvmOverloads constructor(
     }
 
     private fun drawMonth(canvas: Canvas) {
-        val monthLabelString = "${calendar.get(Calendar.MONTH) + 1}月"
+        val monthLabelString = "${calendar.get(Calendar.YEAR)}年${calendar.get(Calendar.MONTH) + 1}月"
 
-        val x = canvas.width - paintMonth.measureText(monthLabelString) - monthLabelPaddingRight
+        val x = canvas.width / 2 - paintMonth.measureText(monthLabelString) / 2
         val y = monthHeight.toFloat()
 
         canvas.drawText(monthLabelString, x, y, paintMonth)
@@ -266,12 +275,17 @@ class MonthView @JvmOverloads constructor(
                 }
                 dayAfterToday(day) -> {
                     dayString = day.toString()
-                    paintText.color = resources.getColor(R.color.color_white)
+                    paintText.color = resources.getColor(R.color.color_99_white)
+                    paintTag.color = resources.getColor(R.color.color_blue_ABFF)
+                }
+                isWeekend(day) -> {
+                    dayString = day.toString()
+                    paintText.color = resources.getColor(R.color.color_weekend_blue)
                     paintTag.color = resources.getColor(R.color.color_blue_ABFF)
                 }
                 else -> {
                     dayString = day.toString()
-                    paintText.color = resources.getColor(R.color.color_66_white)
+                    paintText.color = resources.getColor(R.color.color_white)
                     paintTag.color = resources.getColor(R.color.color_66_white)
                 }
             }
@@ -343,13 +357,14 @@ class MonthView @JvmOverloads constructor(
 
     private fun initPaints(res: Resources) {
         paintMonth.isAntiAlias = true
-        paintMonth.textSize = monthHeight.toFloat()
+        paintMonth.textSize = context.dp2px(14f).toFloat()
         paintMonth.textAlign = Paint.Align.LEFT
-        paintMonth.color = resources.getColor(R.color.color_blue_4657)
+        paintMonth.color = resources.getColor(R.color.color_white)
 
         paintCell.isAntiAlias = true
+        // 默认黑色,周末时间设置为白色
         paintCell.color = resources.getColor(R.color.color_white)
-        paintCell.textSize = 48f
+        paintCell.textSize = context.dp2px(16f).toFloat()
         paintCell.textAlign = Paint.Align.CENTER
 
         paintTaskTag.color = resources.getColor(R.color.color_blue_ABFF)
