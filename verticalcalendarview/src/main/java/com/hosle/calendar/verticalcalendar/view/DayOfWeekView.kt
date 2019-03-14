@@ -23,16 +23,16 @@ class DayOfWeekView @JvmOverloads constructor(
     private val paintDayOfWeek = TextPaint()
 
     private var cellWidth = 0
-    private var cellHeight = context.dp2px(20f) //text size
+    private var cellHeight = context.dp2px(18f) //text size
 
     private val mDayOfWeekLabels = arrayOfNulls<String>(7)
     private var weekStart = 0
 
     init {
         paintDayOfWeek.isAntiAlias = true
-        paintDayOfWeek.textSize = context.dp2px(14f).toFloat()
+        paintDayOfWeek.textSize = context.dp2px(12f).toFloat()
         paintDayOfWeek.textAlign = Paint.Align.CENTER
-        paintDayOfWeek.color = resources.getColor(R.color.color_66_white)
+        paintDayOfWeek.color = resources.getColor(R.color.color_blue_4657)
         paintDayOfWeek.style = Paint.Style.FILL
     }
 
@@ -61,7 +61,7 @@ class DayOfWeekView @JvmOverloads constructor(
 
     override fun onDraw(canvas: Canvas?) {
         super.onDraw(canvas)
-
+        canvas?.drawColor(Color.parseColor("#F8F8F8"))
         drawDaysOfWeek(canvas!!)
     }
 
