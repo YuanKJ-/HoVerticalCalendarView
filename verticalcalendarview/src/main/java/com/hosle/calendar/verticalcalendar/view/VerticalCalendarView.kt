@@ -64,6 +64,8 @@ class VerticalCalendarView @JvmOverloads constructor(
         recycler_view_calendar.apply {
             layoutManager = LinearLayoutManager(context, LinearLayoutManager.VERTICAL, false)
 
+            TODO("监听recycler view刷新,初始化month label")
+
             addOnScrollListener(object : RecyclerView.OnScrollListener() {
 
                 override fun onScrolled(recyclerView: RecyclerView?, dx: Int, dy: Int) {
@@ -76,7 +78,8 @@ class VerticalCalendarView @JvmOverloads constructor(
                     if (_firstVisibleItemPosition != firstVisibleItemPosition) {
                         firstVisibleItemPosition = _firstVisibleItemPosition
 
-                        tvMonthLabel.text = "${firstVisibleMonthView.getMonth()}月"
+                        tvMonthLabel.text = "${firstVisibleMonthView.getYear()}年${firstVisibleMonthView.getMonth()}月"
+
 
                         if (isGoingDown(dy)) {
                             tvMonthLabel.layout(initialLeftOfMonthLabel, initialTopOfMonthLabel - monthLabelHeight, initialRightOfMonthLabel, initialBottomOfMonthLabel - monthLabelHeight)

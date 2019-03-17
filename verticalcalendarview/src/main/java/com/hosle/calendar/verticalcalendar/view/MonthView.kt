@@ -152,6 +152,10 @@ class MonthView @JvmOverloads constructor(
         onDayClickListener = listener
     }
 
+    fun getYear(): Int {
+        return year
+    }
+
     fun getMonth(): Int {
         return month + 1
     }

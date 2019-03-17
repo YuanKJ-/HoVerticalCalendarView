@@ -8,4 +8,13 @@
         <item name="colorAccent">@color/colorAccent</item>
     </style>
 
+    <style name="calendar_quick_btn_style" >
+        <item name="android:layout_width">105dp</item>
+        <item name="android:layout_height">36dp</item>
+        <item name="android:textColor">#333333</item>
+        <item name="android:textSize">14dp</item>
+        <item name="android:gravity">center</item>
+        <item name="android:background">@drawable/calendar_shape_quick_btn</item>
+    </style>
+
 </resources>

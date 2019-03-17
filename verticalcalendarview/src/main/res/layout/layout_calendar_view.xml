@@ -12,14 +12,12 @@
     <TextView
         android:id="@+id/tv_month_label"
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"
+        android:layout_height="28dp"
         android:layout_marginTop="40dp"
         android:background="@color/color_bg"
-        android:gravity="right"
-        android:paddingRight="10dp"
-        android:text="5月"
-        android:textColor="@color/color_blue_4657"
-        android:textSize="20dp" />
+        android:gravity="center"
+        android:textColor="@color/color_white"
+        android:textSize="14dp" />
 
     <com.hosle.calendar.verticalcalendar.view.DayOfWeekView
         android:id="@+id/header_day_of_week"

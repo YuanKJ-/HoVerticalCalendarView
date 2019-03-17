@@ -1,0 +1,100 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:orientation="vertical"
+    tools:context="com.wehotel.calendar.V3CalendarActivity">
+
+    <!-- ToolBar -->
+    <RelativeLayout
+        android:id="@+id/toolbar"
+        android:layout_width="match_parent"
+        android:layout_height="50dp">
+
+        <ImageView
+            android:id="@+id/back_icon"
+            android:layout_width="32dp"
+            android:layout_height="match_parent"
+            android:scaleType="center"
+            android:src="@drawable/back_icon" />
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_centerInParent="true"
+            android:text="选择日期"
+            android:textColor="#333333"
+            android:textSize="17dp" />
+    </RelativeLayout>
+
+    <android.support.design.widget.CoordinatorLayout
+        android:id="@+id/scrollView"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:background="@android:color/transparent"
+        android:fillViewport="true"
+        app:layout_behavior="@string/appbar_scrolling_view_behavior">
+
+        <android.support.design.widget.AppBarLayout
+            android:id="@+id/app_bar"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:background="@null"
+            android:orientation="vertical"
+            app:elevation="0dp">
+
+            <android.support.constraint.ConstraintLayout
+                android:id="@+id/quick_bar"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                app:layout_scrollFlags="scroll|enterAlways|snap">
+                <!-- 快捷选择按钮组 -->
+                <TextView
+                    android:id="@+id/yesterday_btn"
+                    style="@style/calendar_quick_btn_style"
+                    android:layout_marginTop="16dp"
+                    android:layout_marginBottom="13dp"
+                    android:text="昨日"
+                    app:layout_constraintLeft_toLeftOf="parent"
+                    app:layout_constraintRight_toLeftOf="@+id/this_week_btn"
+                    app:layout_constraintTop_toTopOf="parent"
+                    app:layout_constraintBottom_toBottomOf="parent"/>
+
+                <TextView
+                    android:id="@+id/this_week_btn"
+                    style="@style/calendar_quick_btn_style"
+                    android:text="本周"
+                    app:layout_constraintBottom_toBottomOf="@id/yesterday_btn"
+                    app:layout_constraintLeft_toRightOf="@id/yesterday_btn"
+                    app:layout_constraintRight_toLeftOf="@+id/this_month_btn"
+                    app:layout_constraintTop_toTopOf="@id/yesterday_btn" />
+
+                <TextView
+                    android:id="@+id/this_month_btn"
+                    style="@style/calendar_quick_btn_style"
+                    android:text="本月"
+                    app:layout_constraintBottom_toBottomOf="@id/yesterday_btn"
+                    app:layout_constraintLeft_toRightOf="@id/this_week_btn"
+                    app:layout_constraintRight_toRightOf="parent"
+                    app:layout_constraintTop_toTopOf="@id/yesterday_btn" />
+            </android.support.constraint.ConstraintLayout>
+
+            <net.lucode.hackware.magicindicator.MagicIndicator
+                android:id="@+id/magic_indicator"
+                android:layout_width="match_parent"
+                android:layout_height="40dp" />
+
+        </android.support.design.widget.AppBarLayout>
+
+        <android.support.v4.view.ViewPager
+            android:id="@+id/view_pager"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            app:layout_behavior="@string/appbar_scrolling_view_behavior"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintTop_toBottomOf="@id/app_bar" />
+
+    </android.support.design.widget.CoordinatorLayout>
+</LinearLayout>
