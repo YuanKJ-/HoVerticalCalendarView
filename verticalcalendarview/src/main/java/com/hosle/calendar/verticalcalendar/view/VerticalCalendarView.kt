@@ -6,6 +6,7 @@ import android.support.v7.widget.RecyclerView
 import android.util.AttributeSet
 import android.view.LayoutInflater
 import android.view.ViewGroup
+import android.view.ViewTreeObserver
 import android.widget.FrameLayout
 import android.widget.TextView
 import com.hosle.calendar.verticalcalendar.R
@@ -64,8 +65,6 @@ class VerticalCalendarView @JvmOverloads constructor(
         recycler_view_calendar.apply {
             layoutManager = LinearLayoutManager(context, LinearLayoutManager.VERTICAL, false)
 
-            TODO("监听recycler view刷新,初始化month label")
-
             addOnScrollListener(object : RecyclerView.OnScrollListener() {
 
                 override fun onScrolled(recyclerView: RecyclerView?, dx: Int, dy: Int) {
@@ -116,6 +115,15 @@ class VerticalCalendarView @JvmOverloads constructor(
 
     fun setCalendarParams(monthArrange:Array<Array<Int>>,onDayClickListener: MonthView.OnDayClickListener?, operationForTaskCount:((Calendar) -> Int)? = null) {
         dateMonth = monthArrange
+        //初始化month label
+        tvMonthLabel.text = "${dateMonth[0][0]}年${dateMonth[0][1]}月"
+        //刷新完成后自动定位到当前月份
+        viewTreeObserver.addOnGlobalLayoutListener(object :ViewTreeObserver.OnGlobalLayoutListener {
+            override fun onGlobalLayout() {
+                viewTreeObserver.removeOnGlobalLayoutListener(this)
+                (recycler_view_calendar.layoutManager as LinearLayoutManager).scrollToPositionWithOffset(dateMonth.size - 2, 0)
+            }
+        })
         setAdapter(CalendarAdapter(dateMonth, onDayClickListener,operationForTaskCount))
     }
 

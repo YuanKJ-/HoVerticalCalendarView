@@ -24,7 +24,7 @@ class MonthView @JvmOverloads constructor(
 ) : View(context, attrs, defStyleAttr) {
 
     private val DAYS_IN_WEEK = 7
-    private val MAX_WEEKS_IN_MONTH = 6
+    private val MAX_WEEKS_IN_MONTH = 6 //一个月最大周数是6天
 
     private val calendar = Calendar.getInstance()
     private var daysInMonth = 0
@@ -39,8 +39,10 @@ class MonthView @JvmOverloads constructor(
     private var cellWidth = 0
     private var cellHeight = 0
     private var monthHeight = context.dp2px(20f)
+    private var cellBgSize = context.dp2px(48f) //选中日期蓝色背景size
     private var monthLabelPaddingRight = context.dp2px(10f)
 
+    private val paintCellBg = Paint()
     private val paintCell = TextPaint()
     private val paintMonth = TextPaint()
     private val paintTaskTag = Paint()
@@ -115,7 +117,7 @@ class MonthView @JvmOverloads constructor(
         cellWidth = paddedWidth / DAYS_IN_WEEK
         cellHeight = cellWidth
 
-        val preferredHeight = (cellHeight * MAX_WEEKS_IN_MONTH
+        val preferredHeight = (cellHeight * getActualWeekInMonth()
                 + monthHeight
                 + paddingTop + paddingBottom)
         val resolvedHeight = View.resolveSize(preferredHeight, heightMeasureSpec)
@@ -217,6 +219,12 @@ class MonthView @JvmOverloads constructor(
         }
     }
 
+    //获取当前月份实际周数
+    private fun getActualWeekInMonth() : Int {
+        return calendar.getActualMaximum(Calendar.WEEK_OF_MONTH)
+    }
+
+    //判断当前日期是否是周末
     private fun isWeekend(dayOfMonth: Int) : Boolean {
         var cal = Calendar.getInstance();
         cal.set(Calendar.YEAR, calendar.get(Calendar.YEAR))
@@ -274,8 +282,11 @@ class MonthView @JvmOverloads constructor(
             when {
                 day == today -> {
                     dayString = "今天"
-                    paintText.color = resources.getColor(R.color.color_blue_ABFF)
+                    paintText.color = resources.getColor(android.R.color.white)
                     paintTag.color = resources.getColor(R.color.color_blue_ABFF)
+                    //选中日期画蓝色背景
+                    canvas.drawRect(colCenter - cellBgSize / 2f, rowCenter - cellBgSize / 2f,
+                            colCenter + cellBgSize / 2f, rowCenter + cellBgSize / 2f, paintCellBg)
                 }
                 dayAfterToday(day) -> {
                     dayString = day.toString()
@@ -370,6 +381,10 @@ class MonthView @JvmOverloads constructor(
         paintCell.color = resources.getColor(R.color.color_white)
         paintCell.textSize = context.dp2px(16f).toFloat()
         paintCell.textAlign = Paint.Align.CENTER
+
+        paintCellBg.isAntiAlias = true
+        // 默认蓝色,周末时间设置为白色
+        paintCellBg.color = resources.getColor(R.color.color_weekend_blue)
 
         paintTaskTag.color = resources.getColor(R.color.color_blue_ABFF)
         paintTaskTag.isAntiAlias = true
