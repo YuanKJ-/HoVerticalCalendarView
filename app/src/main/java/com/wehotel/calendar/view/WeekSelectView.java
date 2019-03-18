@@ -3,6 +3,7 @@ package com.wehotel.calendar.view;
 import android.content.Context;
 import android.support.annotation.Nullable;
 import android.support.constraint.ConstraintLayout;
+import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.util.AttributeSet;
 import android.util.Log;
@@ -38,6 +39,7 @@ public class WeekSelectView extends ConstraintLayout {
 
     public WeekSelectView(Context context, AttributeSet attrs, int defStyleAttr) {
         super(context, attrs, defStyleAttr);
+        inflate(context, R.layout.linkage_rv_layout, this);
         titleList = (RecyclerView) findViewById(R.id.title_rv);
         valueList = (RecyclerView) findViewById(R.id.value_rv);
         int initYear = 2015;
@@ -50,8 +52,10 @@ public class WeekSelectView extends ConstraintLayout {
             YearModel yearModel = new YearModel();
             yearModel.year = i;
             yearModel.isSelected = false;
+            yearModels.add(yearModel);
         }
         TitleAdapter titleAdapter = new TitleAdapter(yearModels);
+        titleList.setLayoutManager(new LinearLayoutManager(context, LinearLayoutManager.VERTICAL, false));
         titleList.setAdapter(titleAdapter);
     }
 
