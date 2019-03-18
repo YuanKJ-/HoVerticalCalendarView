@@ -13,6 +13,8 @@ import com.hosle.vertical_calendar.demo.R;
 import com.wehotel.calendar.bean.WeekBeanV3;
 import com.wehotel.calendar.util.TimeFormatUtils;
 
+import java.util.ArrayList;
+import java.util.Calendar;
 import java.util.List;
 
 /**
@@ -38,30 +40,41 @@ public class WeekSelectView extends ConstraintLayout {
         super(context, attrs, defStyleAttr);
         titleList = (RecyclerView) findViewById(R.id.title_rv);
         valueList = (RecyclerView) findViewById(R.id.value_rv);
+        int initYear = 2015;
         List<WeekBeanV3> weekBeans = TimeFormatUtils.getWeekBeans();
         Log.d(TAG, "WeekSelectView: ");
+        List<YearModel> yearModels = new ArrayList<>();
+        Calendar currentTime = Calendar.getInstance();
+        int currentYear = currentTime.get(Calendar.YEAR);
+        for(int i = currentYear; i>initYear; i--) {
+            YearModel yearModel = new YearModel();
+            yearModel.year = i;
+            yearModel.isSelected = false;
+        }
+        TitleAdapter titleAdapter = new TitleAdapter(yearModels);
+        titleList.setAdapter(titleAdapter);
     }
 
-    private static class YearBean {
-        public String year;
+    private static class YearModel {
+        public int year;
         public boolean isSelected;
         public int bindValPosition;
     }
 
-    private static class WeekBean {
+    private static class WeekModel {
         public String weekCount; //第几周
         public String startDate; //起始日期
         public String endDate; //结束日期
     }
 
-    private static class TitleAdapter extends BaseQuickAdapter<YearBean, BaseViewHolder> {
+    private static class TitleAdapter extends BaseQuickAdapter<YearModel, BaseViewHolder> {
 
-        public TitleAdapter(@Nullable List<YearBean> data) {
-            super(data);
+        public TitleAdapter(@Nullable List<YearModel> data) {
+            super(R.layout.year_item, data);
         }
 
         @Override
-        protected void convert(BaseViewHolder helper, YearBean item) {
+        protected void convert(BaseViewHolder helper, YearModel item) {
 
         }
     }
