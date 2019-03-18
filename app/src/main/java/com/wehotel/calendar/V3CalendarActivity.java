@@ -15,6 +15,7 @@ import com.hosle.calendar.verticalcalendar.view.MonthView;
 import com.hosle.calendar.verticalcalendar.view.VerticalCalendarView;
 import com.hosle.vertical_calendar.demo.R;
 import com.wehotel.calendar.adapter.CalendarPagerAdapter;
+import com.wehotel.calendar.view.WeekSelectView;
 
 import net.lucode.hackware.magicindicator.*;
 import net.lucode.hackware.magicindicator.buildins.*;
@@ -46,44 +47,13 @@ public class V3CalendarActivity extends AppCompatActivity {
         initMagicIndicator();
     }
 
-    private Integer[][] createMonth(int count) {
-        Calendar calendar = Calendar.getInstance();
-        calendar.add(Calendar.MONTH, -count);
-
-        Integer[][] resultList = new Integer[count+2][2];
-
-        for (int i = 0; i < count + 2; i++) {
-//            Integer[] item = new Integer[2];
-            resultList[i][0] = calendar.get(Calendar.YEAR);
-            resultList[i][1] = calendar.get(Calendar.MONTH) + 1;
-            calendar.add(Calendar.MONTH, 1);
-        }
-
-        return resultList;
-    }
-
-    private View initDayView() {
-        VerticalCalendarView calendarView = new VerticalCalendarView(this);
-        calendarView.setCalendarParams(createMonth(28), new MonthView.OnDayClickListener() {
-            @Override
-            public void onDayClick(@NotNull MonthView view, @NotNull Calendar day) {
-                String dateString = day.get(Calendar.YEAR) +
-                        "-" + (day.get(Calendar.MONTH) + 1) + "-" + day.get(Calendar.DAY_OF_MONTH);
-                Toast.makeText(V3CalendarActivity.this, dateString, Toast.LENGTH_SHORT).show();
-            }
-        },null);
-        return calendarView;
-    }
-
     private void initViewPager() {
         viewPager = (ViewPager) findViewById(R.id.view_pager);
         List<View> views = new ArrayList<>();
-        TextView textView = new TextView(this);
-        textView.setText("呵呵呵呵呵呵呵呵");
         views.add(initDayView());
-        views.add(textView);
-        views.add(new TextView(this));
-        views.add(new TextView(this));
+        views.add(initWeekView());
+        views.add(initMonthView());
+        views.add(initQuarterView());
         CalendarPagerAdapter pagerAdapter = new CalendarPagerAdapter(this, views);
         viewPager.setAdapter(pagerAdapter);
     }
@@ -138,9 +108,61 @@ public class V3CalendarActivity extends AppCompatActivity {
         ViewPagerHelper.bind(magicIndicator, viewPager);
     }
 
+    //<editor-fold desc="ViewPager 4块选择view">
+    /**
+     * 初始化按天选择View
+     * @return view
+     */
+    private View initDayView() {
+        VerticalCalendarView calendarView = new VerticalCalendarView(this);
+        calendarView.setCalendarParams(createMonth(28), new MonthView.OnDayClickListener() {
+            @Override
+            public void onDayClick(@NotNull MonthView view, @NotNull Calendar day) {
+                String dateString = day.get(Calendar.YEAR) +
+                        "-" + (day.get(Calendar.MONTH) + 1) + "-" + day.get(Calendar.DAY_OF_MONTH);
+                Toast.makeText(V3CalendarActivity.this, dateString, Toast.LENGTH_SHORT).show();
+            }
+        }, null);
+        return calendarView;
+    }
 
-    public static int dp2px(Context context,float dpValue){
-        final float scale = context.getResources ().getDisplayMetrics ().density;
-        return (int) (dpValue * scale + 0.5f);
+    /**
+     * 初始化按周选择view
+     * @return view
+     */
+    private View initWeekView() {
+        return new WeekSelectView(this);
+    }
+
+    /**
+     * 初始化按月选择view
+     * @return view
+     */
+    private View initMonthView() {
+        return new TextView(this);
+    }
+
+    /**
+     * 初始化按季度选择view
+     * @return view
+     */
+    private View initQuarterView() {
+        return new TextView(this);
+    }
+    //</editor-fold>
+
+    //初始化按天选择adapter数据
+    private Integer[][] createMonth(int count) {
+        Calendar calendar = Calendar.getInstance();
+        calendar.add(Calendar.MONTH, -count);
+
+        Integer[][] resultList = new Integer[count+2][2];
+
+        for (int i = 0; i < count + 2; i++) {
+            resultList[i][0] = calendar.get(Calendar.YEAR);
+            resultList[i][1] = calendar.get(Calendar.MONTH) + 1;
+            calendar.add(Calendar.MONTH, 1);
+        }
+        return resultList;
     }
 }
