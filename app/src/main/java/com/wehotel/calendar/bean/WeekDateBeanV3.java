@@ -1,33 +1,22 @@
 package com.wehotel.calendar.bean;
 
 public class WeekDateBeanV3 {
+    public static final int HEADER_TYPE = 0;
+    public static final int ITEM_TYPE = 1;
 
-    private String week; //本年第几周
-    private String startDate; //本周起始日期
-    private String endDate; //本周结束日期
+    public String week; //本年第几周
+    public String startDate; //本周起始日期
+    public String endDate; //本周结束日期
 
-    public String getStartDate() {
-        return startDate;
+    public int type; //item类型
+    public String year; //头部显示年份
+    public int bindTitlePosition; //绑定大类选中位置
+
+    public WeekDateBeanV3() {
+        this.type = ITEM_TYPE;
     }
 
-    public void setStartDate(String startDate) {
-        this.startDate = startDate;
+    public WeekDateBeanV3(String year) {
+        this.type = HEADER_TYPE;
     }
-
-    public String getEndDate() {
-        return endDate;
-    }
-
-    public void setEndDate(String endDate) {
-        this.endDate = endDate;
-    }
-
-    public String getWeek() {
-        return week;
-    }
-
-    public void setWeek(String week) {
-        this.week = week;
-    }
-
 }

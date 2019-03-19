@@ -6,18 +6,42 @@
     android:layout_height="match_parent"
     tools:parentTag="android.support.constraint.ConstraintLayout">
 
+    <View
+        android:id="@+id/top_divider"
+        android:layout_width="match_parent"
+        android:layout_height="1dp"
+        android:background="#DDDFE2"
+        app:layout_constraintLeft_toLeftOf="parent"
+        app:layout_constraintRight_toRightOf="parent"
+        app:layout_constraintTop_toTopOf="parent" />
+
     <android.support.v7.widget.RecyclerView
         android:id="@+id/title_rv"
         android:layout_width="90dp"
-        android:layout_height="match_parent"
+        android:layout_height="0dp"
+        android:background="#F8F8F8"
+        app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintLeft_toLeftOf="parent"
-        app:layout_constraintRight_toLeftOf="@+id/value_rv" />
+        app:layout_constraintRight_toLeftOf="@+id/rv_divider"
+        app:layout_constraintTop_toBottomOf="@id/top_divider" />
+
+    <View
+        android:id="@+id/rv_divider"
+        android:layout_width="1dp"
+        android:layout_height="0dp"
+        android:background="#CBCED1"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintLeft_toRightOf="@id/title_rv"
+        app:layout_constraintRight_toLeftOf="@+id/value_rv"
+        app:layout_constraintTop_toBottomOf="@id/top_divider" />
 
     <android.support.v7.widget.RecyclerView
         android:id="@+id/value_rv"
         android:layout_width="0dp"
-        android:layout_height="match_parent"
-        app:layout_constraintLeft_toRightOf="@id/title_rv"
-        app:layout_constraintRight_toRightOf="parent" />
+        android:layout_height="0dp"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintLeft_toRightOf="@id/rv_divider"
+        app:layout_constraintRight_toRightOf="parent"
+        app:layout_constraintTop_toBottomOf="@id/top_divider" />
 
 </merge>

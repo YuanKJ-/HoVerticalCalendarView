@@ -25,13 +25,13 @@ public class TimeFormatUtils {
         if (currentYear < 2015) {
             //系统时间有问题
 //            ToastUtil.show(MainApplication.context(), "系统时间有问题");
-            return null;
+            return weekBeans;
         }
         int yearLength = currentYear - initYear;
         for (int i = 0; i < yearLength; i++) {
             int year = initYear + 1 + i;
             WeekBeanV3 weekBean = new WeekBeanV3();
-            weekBean.setYear(year + "");
+            weekBean.year = year + "";
 
             Calendar c = Calendar.getInstance();
             c.set(year, Calendar.JANUARY, 1);
@@ -66,13 +66,13 @@ public class TimeFormatUtils {
                     startTime = getFirstDayOfWeek(year, j);
                     endTime = getLastDayOfWeek(year, j);
                 }
-                weekDateBean.setWeek(String.valueOf(j + 1));
-                weekDateBean.setEndDate(year + "-" + endTime);
-                weekDateBean.setStartDate(year + "-" + startTime);
+                weekDateBean.week = String.valueOf(j + 1);
+                weekDateBean.endDate = year + "-" + endTime;
+                weekDateBean.startDate = year + "-" + startTime;
                 weekDateBeans.add(0,weekDateBean);
             }
 
-            weekBean.setWeekDateBeanList(weekDateBeans);
+            weekBean.weekDateBeanList = weekDateBeans;
             weekBeans.add(0,weekBean);
         }
         return weekBeans;

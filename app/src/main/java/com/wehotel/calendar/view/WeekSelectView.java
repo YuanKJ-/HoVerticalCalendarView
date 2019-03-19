@@ -10,8 +10,10 @@ import android.util.Log;
 
 import com.chad.library.adapter.base.BaseQuickAdapter;
 import com.chad.library.adapter.base.BaseViewHolder;
+import com.chad.library.adapter.base.util.MultiTypeDelegate;
 import com.hosle.vertical_calendar.demo.R;
 import com.wehotel.calendar.bean.WeekBeanV3;
+import com.wehotel.calendar.bean.WeekDateBeanV3;
 import com.wehotel.calendar.util.TimeFormatUtils;
 
 import java.util.ArrayList;
@@ -45,40 +47,74 @@ public class WeekSelectView extends ConstraintLayout {
         int initYear = 2015;
         List<WeekBeanV3> weekBeans = TimeFormatUtils.getWeekBeans();
         Log.d(TAG, "WeekSelectView: ");
-        List<YearModel> yearModels = new ArrayList<>();
-        Calendar currentTime = Calendar.getInstance();
-        int currentYear = currentTime.get(Calendar.YEAR);
-        for(int i = currentYear; i>initYear; i--) {
-            YearModel yearModel = new YearModel();
-            yearModel.year = i;
-            yearModel.isSelected = false;
-            yearModels.add(yearModel);
+        List<WeekDateBeanV3> weekDataBeans = new ArrayList<>();
+        for (int i = 0; i < weekBeans.size(); i++) {
+            WeekBeanV3 weekBean = weekBeans.get(i);
+            List<WeekDateBeanV3> dateBeans = weekBean.weekDateBeanList;
+            //value列表分组头部绑定title分组pos
+            WeekDateBeanV3 weekHeader = new WeekDateBeanV3(weekBean.year);
+            weekHeader.bindTitlePosition = i;
+            weekDataBeans.add(weekHeader);
+            //title分组绑定value分组头部pos
+            weekBean.bindValuePosition = weekDataBeans.size() - 1;
+            for (WeekDateBeanV3 dateBeanV3 : dateBeans) {
+                dateBeanV3.bindTitlePosition = i;
+                weekDataBeans.add(dateBeanV3);
+            }
         }
-        TitleAdapter titleAdapter = new TitleAdapter(yearModels);
         titleList.setLayoutManager(new LinearLayoutManager(context, LinearLayoutManager.VERTICAL, false));
+        valueList.setLayoutManager(new LinearLayoutManager(context, LinearLayoutManager.VERTICAL, false));
+
+        TitleAdapter titleAdapter = new TitleAdapter(weekBeans);
         titleList.setAdapter(titleAdapter);
+
+        ValueAdapter valueAdapter = new ValueAdapter(weekDataBeans);
+        valueList.setAdapter(valueAdapter);
     }
 
-    private static class YearModel {
-        public int year;
-        public boolean isSelected;
-        public int bindValPosition;
-    }
+    private static class TitleAdapter extends BaseQuickAdapter<WeekBeanV3, BaseViewHolder> {
+        private String selectedYear;
 
-    private static class WeekModel {
-        public String weekCount; //第几周
-        public String startDate; //起始日期
-        public String endDate; //结束日期
-    }
-
-    private static class TitleAdapter extends BaseQuickAdapter<YearModel, BaseViewHolder> {
-
-        public TitleAdapter(@Nullable List<YearModel> data) {
+        public TitleAdapter(@Nullable List<WeekBeanV3> data) {
             super(R.layout.year_item, data);
+            if (data != null && data.size() > 0) {
+                selectedYear = data.get(0).year;
+            }
         }
 
         @Override
-        protected void convert(BaseViewHolder helper, YearModel item) {
+        protected void convert(BaseViewHolder helper, WeekBeanV3 item) {
+            String text = item.year + "年";
+            helper.setText(R.id.year_text, text);
+            if (item.year.equals(selectedYear)) {
+                //设置选中
+                helper.setBackgroundColor(R.id.year_text, mContext.getResources().getColor(android.R.color.white));
+            } else {
+                helper.setBackgroundColor(R.id.year_text, mContext.getResources().getColor(android.R.color.transparent));
+            }
+        }
+    }
+
+    private static class ValueAdapter extends BaseQuickAdapter<WeekDateBeanV3, BaseViewHolder> {
+
+        public ValueAdapter(@Nullable List<WeekDateBeanV3> data) {
+            super(data);
+            //Step.1
+            setMultiTypeDelegate(new MultiTypeDelegate<WeekDateBeanV3>() {
+                @Override
+                protected int getItemType(WeekDateBeanV3 entity) {
+                    //根据你的实体类来判断布局类型
+                    return entity.type;
+                }
+            });
+            //Step.2
+            getMultiTypeDelegate()
+                    .registerItemType(WeekDateBeanV3.HEADER_TYPE, R.layout.value_header_view)
+                    .registerItemType(WeekDateBeanV3.ITEM_TYPE, R.layout.value_item_view);
+        }
+
+        @Override
+        protected void convert(BaseViewHolder helper, WeekDateBeanV3 item) {
 
         }
     }
