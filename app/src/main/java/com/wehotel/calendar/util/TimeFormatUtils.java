@@ -4,6 +4,8 @@ import com.wehotel.calendar.bean.WeekBeanV3;
 import com.wehotel.calendar.bean.WeekDateBeanV3;
 
 import java.text.DecimalFormat;
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Date;
@@ -122,5 +124,18 @@ public class TimeFormatUtils {
         c.setTime(date);
         c.set(Calendar.DAY_OF_WEEK, c.getFirstDayOfWeek() + 6); // Sunday
         return df.format(c.get(Calendar.MONTH) + 1) + "-" + df.format(c.get(Calendar.DAY_OF_MONTH));
+    }
+
+    public static Calendar timeStrToCalendar(String timeStr) {
+        SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd");
+        try {
+            Date date = sdf.parse(timeStr);
+            Calendar calendar = Calendar.getInstance();
+            calendar.setTime(date);
+            return calendar;
+        } catch (ParseException e) {
+            e.printStackTrace();
+        }
+        return null;
     }
 }

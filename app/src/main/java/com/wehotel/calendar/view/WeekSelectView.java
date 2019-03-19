@@ -7,6 +7,7 @@ import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.util.AttributeSet;
 import android.util.Log;
+import android.view.View;
 
 import com.chad.library.adapter.base.BaseQuickAdapter;
 import com.chad.library.adapter.base.BaseViewHolder;
@@ -17,7 +18,6 @@ import com.wehotel.calendar.bean.WeekDateBeanV3;
 import com.wehotel.calendar.util.TimeFormatUtils;
 
 import java.util.ArrayList;
-import java.util.Calendar;
 import java.util.List;
 
 /**
@@ -30,6 +30,9 @@ public class WeekSelectView extends ConstraintLayout {
 
     private RecyclerView titleList;
     private RecyclerView valueList;
+
+    private TitleAdapter titleAdapter;
+    private ValueAdapter valueAdapter;
 
     public WeekSelectView(Context context) {
         this(context, null);
@@ -65,11 +68,41 @@ public class WeekSelectView extends ConstraintLayout {
         titleList.setLayoutManager(new LinearLayoutManager(context, LinearLayoutManager.VERTICAL, false));
         valueList.setLayoutManager(new LinearLayoutManager(context, LinearLayoutManager.VERTICAL, false));
 
-        TitleAdapter titleAdapter = new TitleAdapter(weekBeans);
+        titleAdapter = new TitleAdapter(weekBeans);
         titleList.setAdapter(titleAdapter);
 
-        ValueAdapter valueAdapter = new ValueAdapter(weekDataBeans);
+        valueAdapter = new ValueAdapter(weekDataBeans);
         valueList.setAdapter(valueAdapter);
+
+        initLinkageScroll();
+    }
+
+    //初始化联合滚动效果
+    private void initLinkageScroll() {
+        titleAdapter.setOnItemClickListener(new BaseQuickAdapter.OnItemClickListener() {
+            @Override
+            public void onItemClick(BaseQuickAdapter adapter, View view, int position) {
+                WeekBeanV3 weekBeanV3 = titleAdapter.getItem(position);
+                if(weekBeanV3 != null) {
+                    titleAdapter.setSelectedYear(weekBeanV3.year);
+                    titleAdapter.notifyDataSetChanged();
+                    ((LinearLayoutManager) valueList.getLayoutManager()).scrollToPositionWithOffset(weekBeanV3.bindValuePosition, 0);
+                }
+            }
+        });
+        valueList.addOnScrollListener(new RecyclerView.OnScrollListener() {
+            @Override
+            public void onScrolled(RecyclerView recyclerView, int dx, int dy) {
+                //获取右侧列表的第一个可见Item的position
+                int topPosition = ((LinearLayoutManager) valueList.getLayoutManager()).findFirstVisibleItemPosition();
+                // 如果此项对应的是左边的大类的index
+                WeekDateBeanV3 weekDateBeanV3 = valueAdapter.getItem(topPosition);
+                if (weekDateBeanV3 != null) {
+                    int bindPos = weekDateBeanV3.bindTitlePosition;
+                    titleAdapter.updateSelectedPos(bindPos);
+                }
+            }
+        });
     }
 
     private static class TitleAdapter extends BaseQuickAdapter<WeekBeanV3, BaseViewHolder> {
@@ -93,13 +126,24 @@ public class WeekSelectView extends ConstraintLayout {
                 helper.setBackgroundColor(R.id.year_text, mContext.getResources().getColor(android.R.color.transparent));
             }
         }
+
+        public void setSelectedYear(String selectedYear) {
+            this.selectedYear = selectedYear;
+        }
+
+        public void updateSelectedPos(int pos) {
+            WeekBeanV3 weekBeanV3 = getItem(pos);
+            if (weekBeanV3 != null && !weekBeanV3.year.equals(selectedYear)) {
+                selectedYear = weekBeanV3.year;
+                notifyDataSetChanged();
+            }
+        }
     }
 
     private static class ValueAdapter extends BaseQuickAdapter<WeekDateBeanV3, BaseViewHolder> {
 
         public ValueAdapter(@Nullable List<WeekDateBeanV3> data) {
             super(data);
-            //Step.1
             setMultiTypeDelegate(new MultiTypeDelegate<WeekDateBeanV3>() {
                 @Override
                 protected int getItemType(WeekDateBeanV3 entity) {
@@ -107,7 +151,6 @@ public class WeekSelectView extends ConstraintLayout {
                     return entity.type;
                 }
             });
-            //Step.2
             getMultiTypeDelegate()
                     .registerItemType(WeekDateBeanV3.HEADER_TYPE, R.layout.value_header_view)
                     .registerItemType(WeekDateBeanV3.ITEM_TYPE, R.layout.value_item_view);
@@ -115,7 +158,20 @@ public class WeekSelectView extends ConstraintLayout {
 
         @Override
         protected void convert(BaseViewHolder helper, WeekDateBeanV3 item) {
-
+            if (item.type == WeekDateBeanV3.HEADER_TYPE) {
+                helper.setText(R.id.header_text, item.year + "年");
+            } else if (item.type == WeekDateBeanV3.ITEM_TYPE) {
+                item.initShowData();
+                helper.setText(R.id.primary_text, item.showWeek);
+                helper.setText(R.id.sub_text, item.showDate);
+                if (helper.getAdapterPosition() == 1) {
+                    helper.setText(R.id.current_tips, "本周");
+                    helper.setVisible(R.id.current_tips, true);
+                } else {
+                    helper.setGone(R.id.current_tips, false);
+                }
+                // TODO: 2019/3/19 判断是否是当前日期,设置选中
+            }
         }
     }
 }
