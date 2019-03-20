@@ -13,6 +13,7 @@ import com.hosle.calendar.verticalcalendar.view.MonthView;
 import com.hosle.calendar.verticalcalendar.view.VerticalCalendarView;
 import com.hosle.vertical_calendar.demo.R;
 import com.wehotel.calendar.adapter.CalendarPagerAdapter;
+import com.wehotel.calendar.view.MonthSelectView;
 import com.wehotel.calendar.view.SeasonSelectView;
 import com.wehotel.calendar.view.WeekSelectView;
 
@@ -138,7 +139,7 @@ public class V3CalendarActivity extends AppCompatActivity {
      * @return view
      */
     private View initMonthView() {
-        return new TextView(this);
+        return new MonthSelectView(this);
     }
 
     /**

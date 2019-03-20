@@ -1,5 +1,6 @@
 package com.wehotel.calendar.util;
 
+import com.wehotel.calendar.bean.MonthDataBeanV3;
 import com.wehotel.calendar.bean.SeasonDateBeanV3;
 import com.wehotel.calendar.bean.WeekBeanV3;
 import com.wehotel.calendar.bean.WeekDateBeanV3;
@@ -21,8 +22,7 @@ import java.util.List;
 public class TimeFormatUtils {
 
     //生成按周计算的数据
-    // TODO: 2019/3/20 initYear改为外部传参
-    public static List<WeekBeanV3> getWeekBeans(int initYear) {
+    public static List<WeekBeanV3> getWeekData(int initYear) {
 //        int initYear = 2015;
         List<WeekBeanV3> weekBeans = new ArrayList<>();
         Calendar currentTime = Calendar.getInstance();
@@ -83,8 +83,37 @@ public class TimeFormatUtils {
         return weekBeans;
     }
 
+    public static List<MonthDataBeanV3> getMonthData(int initYear) {
+        DecimalFormat df = new DecimalFormat("00");
+        List<MonthDataBeanV3> monthDataBeans = new ArrayList<>();
+        Calendar endCalendar = Calendar.getInstance();
+        Calendar startCalendar = Calendar.getInstance();
+        startCalendar.set(initYear, Calendar.JANUARY, 1);
+
+        int month = 0;
+        while (startCalendar.getTimeInMillis() < endCalendar.getTimeInMillis()) {
+            ++month;
+            if (month > 12) {
+                month = 1;
+            }
+            MonthDataBeanV3 monthDataBean = new MonthDataBeanV3();
+            String startTime = "", endTime = "";
+            startTime = startCalendar.get(Calendar.YEAR) + "-" + df.format(startCalendar.get(Calendar.MONTH) + 1) + "-" + "01";
+            endTime = startCalendar.get(Calendar.YEAR) + "-" + df.format(startCalendar.get(Calendar.MONTH) + 1) + "-" + startCalendar.getActualMaximum(Calendar.DAY_OF_MONTH);
+            //年:startCalendar.get(Calendar.YEAR), 月:month, 开始时间:startTime, 结束时间:endTime
+            monthDataBean.year = startCalendar.get(Calendar.YEAR) + "";
+            monthDataBean.month = month + "";
+            monthDataBean.startDate = startTime;
+            monthDataBean.endDate = endTime;
+            monthDataBeans.add(0, monthDataBean);
+
+            startCalendar.add(Calendar.MONTH, 1);
+        }
+        return monthDataBeans;
+    }
+
     //生成按季度计算的数据
-    public static List<SeasonDateBeanV3> getSeasonDates(int initYear) {
+    public static List<SeasonDateBeanV3> getSeasonData(int initYear) {
         DecimalFormat df = new DecimalFormat("00");
         List<SeasonDateBeanV3> seasonDateBeans = new ArrayList<>();
         Calendar endCalendar = Calendar.getInstance();

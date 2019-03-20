@@ -6,12 +6,8 @@ import android.support.constraint.ConstraintLayout;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.util.AttributeSet;
-import android.util.Log;
-import android.view.View;
 
-import com.chad.library.adapter.base.BaseQuickAdapter;
 import com.chad.library.adapter.base.BaseViewHolder;
-import com.chad.library.adapter.base.util.MultiTypeDelegate;
 import com.hosle.vertical_calendar.demo.R;
 import com.wehotel.calendar.adapter.BaseTitleAdapter;
 import com.wehotel.calendar.adapter.BaseValueAdapter;
@@ -72,7 +68,7 @@ public class WeekSelectView extends ConstraintLayout {
 
     private void generateData(List<WeekBeanV3> titleBeans, List<WeekDateBeanV3> valueBeans) {
         //生成源数据
-        List<WeekBeanV3> sourceData = TimeFormatUtils.getWeekBeans(INIT_YEAR);
+        List<WeekBeanV3> sourceData = TimeFormatUtils.getWeekData(INIT_YEAR);
         //生成titleBeans数据
         titleBeans.addAll(sourceData);
         //生成valueBeans数据并绑定pos
