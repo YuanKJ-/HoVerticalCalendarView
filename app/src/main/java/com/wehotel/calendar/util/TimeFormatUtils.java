@@ -1,5 +1,6 @@
 package com.wehotel.calendar.util;
 
+import com.wehotel.calendar.bean.SeasonDateBeanV3;
 import com.wehotel.calendar.bean.WeekBeanV3;
 import com.wehotel.calendar.bean.WeekDateBeanV3;
 
@@ -19,12 +20,14 @@ import java.util.List;
  */
 public class TimeFormatUtils {
 
-    public static List<WeekBeanV3> getWeekBeans() {
-        int initYear = 2015;
+    //生成按周计算的数据
+    // TODO: 2019/3/20 initYear改为外部传参
+    public static List<WeekBeanV3> getWeekBeans(int initYear) {
+//        int initYear = 2015;
         List<WeekBeanV3> weekBeans = new ArrayList<>();
         Calendar currentTime = Calendar.getInstance();
         int currentYear = currentTime.get(Calendar.YEAR);
-        if (currentYear < 2015) {
+        if (currentYear < initYear) {
             //系统时间有问题
 //            ToastUtil.show(MainApplication.context(), "系统时间有问题");
             return weekBeans;
@@ -78,6 +81,38 @@ public class TimeFormatUtils {
             weekBeans.add(0,weekBean);
         }
         return weekBeans;
+    }
+
+    //生成按季度计算的数据
+    public static List<SeasonDateBeanV3> getSeasonDates(int initYear) {
+        DecimalFormat df = new DecimalFormat("00");
+        List<SeasonDateBeanV3> seasonDateBeans = new ArrayList<>();
+        Calendar endCalendar = Calendar.getInstance();
+        Calendar startCalendar = Calendar.getInstance();
+        startCalendar.set(initYear, Calendar.JANUARY, 1);
+//        List<String> dateString = new ArrayList<>();
+        int season = 0;
+        while (startCalendar.getTimeInMillis() < endCalendar.getTimeInMillis()) {
+            ++season;
+            if (season > 4) {
+                season = 1;
+            }
+            SeasonDateBeanV3 seasonDateBean = new SeasonDateBeanV3();
+            String startTime = "", endTime = "";
+            startTime = startCalendar.get(Calendar.YEAR) + "-" + df.format(startCalendar.get(Calendar.MONTH) + 1) + "-" + "01";
+            startCalendar.add(Calendar.MONTH, 2);
+            endTime = startCalendar.get(Calendar.YEAR) + "-" + df.format(startCalendar.get(Calendar.MONTH) + 1) + "-" + startCalendar.getActualMaximum(Calendar.DAY_OF_MONTH);
+            startCalendar.add(Calendar.MONTH, -2);
+//            dateString.add("年：" + startCalendar.get(Calendar.YEAR) + "-季度:" + season + " 开始时间:" + startTime + " 结束时间:" + endTime);
+            seasonDateBean.year = startCalendar.get(Calendar.YEAR) + "";
+            seasonDateBean.season = season + "";
+            seasonDateBean.startDate = startTime;
+            seasonDateBean.endDate = endTime;
+            seasonDateBeans.add(0, seasonDateBean);
+            startCalendar.add(Calendar.MONTH, 3);
+
+        }
+        return seasonDateBeans;
     }
 
     private static int getWeekOfYear(Date date) {

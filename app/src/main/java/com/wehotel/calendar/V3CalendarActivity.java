@@ -6,8 +6,6 @@ import android.support.v4.view.ViewPager;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.view.View;
-import android.view.ViewGroup;
-import android.widget.LinearLayout;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -15,6 +13,7 @@ import com.hosle.calendar.verticalcalendar.view.MonthView;
 import com.hosle.calendar.verticalcalendar.view.VerticalCalendarView;
 import com.hosle.vertical_calendar.demo.R;
 import com.wehotel.calendar.adapter.CalendarPagerAdapter;
+import com.wehotel.calendar.view.SeasonSelectView;
 import com.wehotel.calendar.view.WeekSelectView;
 
 import net.lucode.hackware.magicindicator.*;
@@ -53,7 +52,7 @@ public class V3CalendarActivity extends AppCompatActivity {
         views.add(initDayView());
         views.add(initWeekView());
         views.add(initMonthView());
-        views.add(initQuarterView());
+        views.add(initSeasonView());
         CalendarPagerAdapter pagerAdapter = new CalendarPagerAdapter(this, views);
         viewPager.setAdapter(pagerAdapter);
     }
@@ -146,8 +145,8 @@ public class V3CalendarActivity extends AppCompatActivity {
      * 初始化按季度选择view
      * @return view
      */
-    private View initQuarterView() {
-        return new TextView(this);
+    private View initSeasonView() {
+        return new SeasonSelectView(this);
     }
     //</editor-fold>
 
