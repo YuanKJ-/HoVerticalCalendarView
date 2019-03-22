@@ -1,10 +1,10 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
-    <color name="color_blue_4657">#666666</color>
-    <color name="color_blue_ABFF">#3F51B5</color>
-    <color name="color_bg">#ffffff</color>
-    <color name="color_white">#333333</color>
-    <color name="color_66_white">#66333333</color>
-    <color name="color_99_white">#999999</color>
-    <color name="color_weekend_blue">#4F64FD</color>
+    <color name="calendar_color_blue_4657">#666666</color>
+    <color name="calendar_color_blue_ABFF">#3F51B5</color>
+    <color name="calendar_color_bg">#ffffff</color>
+    <color name="calendar_color_white">#333333</color>
+    <color name="calendar_color_66_white">#66333333</color>
+    <color name="calendar_color_99_white">#999999</color>
+    <color name="calendar_color_weekend_blue">#4F64FD</color>
 </resources>

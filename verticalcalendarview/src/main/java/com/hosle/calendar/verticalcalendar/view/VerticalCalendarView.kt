@@ -28,7 +28,7 @@ class VerticalCalendarView @JvmOverloads constructor(
     private var firstVisibleItemPosition = 0
     private val tvMonthLabel: TextView
 
-    private val monthLabelHeight = context.dp2px(20f) + 10
+    private val monthLabelHeight = context.dp2px(40f)
 
     private var initialTopOfMonthLabel: Int = Int.MIN_VALUE
     private var initialBottomOfMonthLabel: Int = Int.MIN_VALUE
@@ -118,7 +118,7 @@ class VerticalCalendarView @JvmOverloads constructor(
         //初始化month label
         tvMonthLabel.text = "${dateMonth[0][0]}年${dateMonth[0][1]}月"
         //刷新完成后自动定位到当前月份
-        viewTreeObserver.addOnGlobalLayoutListener(object :ViewTreeObserver.OnGlobalLayoutListener {
+        viewTreeObserver.addOnGlobalLayoutListener(object : ViewTreeObserver.OnGlobalLayoutListener {
             override fun onGlobalLayout() {
                 viewTreeObserver.removeOnGlobalLayoutListener(this)
                 (recycler_view_calendar.layoutManager as LinearLayoutManager).scrollToPositionWithOffset(dateMonth.size - 2, 0)

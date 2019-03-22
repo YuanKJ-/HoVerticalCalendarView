@@ -1,18 +1,22 @@
 package com.wehotel.calendar;
 
 import android.content.Context;
+import android.content.Intent;
 import android.graphics.Color;
 import android.support.v4.view.ViewPager;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.view.View;
-import android.widget.TextView;
 import android.widget.Toast;
 
 import com.hosle.calendar.verticalcalendar.view.MonthView;
 import com.hosle.calendar.verticalcalendar.view.VerticalCalendarView;
 import com.hosle.vertical_calendar.demo.R;
 import com.wehotel.calendar.adapter.CalendarPagerAdapter;
+import com.wehotel.calendar.bean.WhCalendarBean;
+import com.wehotel.calendar.enums.TimeTypeEnum;
+import com.wehotel.calendar.listener.DateSelectCallback;
+import com.wehotel.calendar.util.TimeFormatUtils;
 import com.wehotel.calendar.view.MonthSelectView;
 import com.wehotel.calendar.view.SeasonSelectView;
 import com.wehotel.calendar.view.WeekSelectView;
@@ -30,12 +34,33 @@ import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.List;
 
+import io.reactivex.Completable;
+import io.reactivex.CompletableEmitter;
+import io.reactivex.CompletableObserver;
+import io.reactivex.CompletableOnSubscribe;
+import io.reactivex.Single;
+import io.reactivex.SingleEmitter;
+import io.reactivex.SingleObserver;
+import io.reactivex.SingleOnSubscribe;
+import io.reactivex.android.schedulers.AndroidSchedulers;
+import io.reactivex.disposables.CompositeDisposable;
+import io.reactivex.disposables.Disposable;
+import io.reactivex.schedulers.Schedulers;
+
 /**
  * Created by kejie.yuan
  * Date: 2019/3/14
  * Description: 日历选择通用Activity
  */
-public class V3CalendarActivity extends AppCompatActivity {
+public class V3CalendarActivity extends AppCompatActivity implements View.OnClickListener, DateSelectCallback{
+
+    private static final int INIT_YEAR = 2015;
+    private CompositeDisposable compositeDisposable = new CompositeDisposable();
+
+    private View backIcon;
+    private View yesterdayBtn; //直接选定昨天
+    private View thisWeekBtn; //直接选定本周
+    private View thisMonthBtn; //直接选定本月
 
     private ViewPager viewPager;
 
@@ -43,8 +68,26 @@ public class V3CalendarActivity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_calendar_v3);
+        initBtn();
         initViewPager();
         initMagicIndicator();
+    }
+
+    @Override
+    protected void onDestroy() {
+        super.onDestroy();
+        compositeDisposable.clear();
+    }
+
+    private void initBtn() {
+        backIcon = findViewById(R.id.back_icon);
+        yesterdayBtn = findViewById(R.id.yesterday_btn);
+        thisWeekBtn = findViewById(R.id.this_week_btn);
+        thisMonthBtn = findViewById(R.id.this_month_btn);
+        backIcon.setOnClickListener(this);
+        yesterdayBtn.setOnClickListener(this);
+        thisWeekBtn.setOnClickListener(this);
+        thisMonthBtn.setOnClickListener(this);
     }
 
     private void initViewPager() {
@@ -114,15 +157,38 @@ public class V3CalendarActivity extends AppCompatActivity {
      * @return view
      */
     private View initDayView() {
-        VerticalCalendarView calendarView = new VerticalCalendarView(this);
-        calendarView.setCalendarParams(createMonth(28), new MonthView.OnDayClickListener() {
+        final VerticalCalendarView calendarView = new VerticalCalendarView(this);
+        Single.create(new SingleOnSubscribe<Integer[][]>() {
             @Override
-            public void onDayClick(@NotNull MonthView view, @NotNull Calendar day) {
-                String dateString = day.get(Calendar.YEAR) +
-                        "-" + (day.get(Calendar.MONTH) + 1) + "-" + day.get(Calendar.DAY_OF_MONTH);
-                Toast.makeText(V3CalendarActivity.this, dateString, Toast.LENGTH_SHORT).show();
+            public void subscribe(SingleEmitter<Integer[][]> e) throws Exception {
+                Integer[][] dayData = TimeFormatUtils.getDayData(INIT_YEAR);
+                e.onSuccess(dayData);
             }
-        }, null);
+        }).subscribeOn(Schedulers.io())
+                .observeOn(AndroidSchedulers.mainThread())
+                .subscribe(new SingleObserver<Integer[][]>() {
+                    @Override
+                    public void onSubscribe(Disposable d) {
+                        compositeDisposable.add(d);
+                    }
+
+                    @Override
+                    public void onSuccess(Integer[][] dayData) {
+                        calendarView.setCalendarParams(dayData, new MonthView.OnDayClickListener() {
+                            @Override
+                            public void onDayClick(@NotNull MonthView view, @NotNull Calendar day) {
+                                String dateString = day.get(Calendar.YEAR) +
+                                        "-" + (day.get(Calendar.MONTH) + 1) + "-" + day.get(Calendar.DAY_OF_MONTH);
+                                onDateSelect(day.getTimeInMillis(), day.getTimeInMillis(), TimeTypeEnum.DAY.getType(), dateString, dateString);
+                            }
+                        }, null);
+                    }
+
+                    @Override
+                    public void onError(Throwable e) {
+                        e.printStackTrace();
+                    }
+                });
         return calendarView;
     }
 
@@ -131,7 +197,10 @@ public class V3CalendarActivity extends AppCompatActivity {
      * @return view
      */
     private View initWeekView() {
-        return new WeekSelectView(this);
+        WeekSelectView weekSelectView =  new WeekSelectView(this);
+        weekSelectView.setDateSelectCallback(this);
+        weekSelectView.generateDataSync(compositeDisposable);
+        return weekSelectView;
     }
 
     /**
@@ -139,7 +208,10 @@ public class V3CalendarActivity extends AppCompatActivity {
      * @return view
      */
     private View initMonthView() {
-        return new MonthSelectView(this);
+        MonthSelectView monthSelectView = new MonthSelectView(this);
+        monthSelectView.setDateSelectCallback(this);
+        monthSelectView.generateDataSync(compositeDisposable);
+        return monthSelectView;
     }
 
     /**
@@ -147,22 +219,53 @@ public class V3CalendarActivity extends AppCompatActivity {
      * @return view
      */
     private View initSeasonView() {
-        return new SeasonSelectView(this);
+        SeasonSelectView seasonSelectView = new SeasonSelectView(this);
+        seasonSelectView.setDateSelectCallback(this);
+        seasonSelectView.generateDataSync(compositeDisposable);
+        return seasonSelectView;
     }
     //</editor-fold>
 
-    //初始化按天选择adapter数据
-    private Integer[][] createMonth(int count) {
-        Calendar calendar = Calendar.getInstance();
-        calendar.add(Calendar.MONTH, -count);
-
-        Integer[][] resultList = new Integer[count+2][2];
-
-        for (int i = 0; i < count + 2; i++) {
-            resultList[i][0] = calendar.get(Calendar.YEAR);
-            resultList[i][1] = calendar.get(Calendar.MONTH) + 1;
-            calendar.add(Calendar.MONTH, 1);
+    @Override
+    public void onClick(View v) {
+        if (v.getId() == R.id.back_icon) {
+            finish();
+        } else if (v.getId() == R.id.yesterday_btn) {
+            // 获取昨天时间戳和格式化字符串
+            String lastDayFormat = TimeFormatUtils.getLastDay();
+            long beginDate = TimeFormatUtils.formatTimeToMill(lastDayFormat);
+            onDateSelect(beginDate, beginDate, TimeTypeEnum.DAY.getType(), lastDayFormat, lastDayFormat);
+        } else if (v.getId() == R.id.this_week_btn) {
+            // 获取本周开始和结束的时间戳和格式化字符串
+            long beginDate = TimeFormatUtils.formatTimeToMill(TimeFormatUtils.getWeekFirstDay());
+            long endDate = TimeFormatUtils.formatTimeToMill(TimeFormatUtils.getWeekEndDay());
+            String beginFormat = TimeFormatUtils.getCurrentYear()+"-"+TimeFormatUtils.getWeekOfCurrentYear();
+            onDateSelect(beginDate,endDate, TimeTypeEnum.WEEK.getType(), beginFormat,beginFormat);
+        } else if (v.getId() == R.id.this_month_btn) {
+            // 获取本月开始和结束的时间戳和格式化字符串
+            long beginDate = TimeFormatUtils.formatTimeToMill(TimeFormatUtils.getFirstDayOfMonth());
+            long endDate = TimeFormatUtils.formatTimeToMill(TimeFormatUtils.getEndDayOfMonth());
+            String beginFormat = TimeFormatUtils.getThisMonth();
+            onDateSelect(beginDate,endDate, TimeTypeEnum.MONTH.getType(),beginFormat,beginFormat);
         }
-        return resultList;
+    }
+
+    @Override
+    public void onDateSelect(long beginDate, long endDate, String type, String beginFormat, String endFormat) {
+        // 构造WhCalendarBean
+        WhCalendarBean whCalendarBean = new WhCalendarBean();
+        whCalendarBean.setBeginDate(beginDate);
+        whCalendarBean.setEndDate(endDate);
+        whCalendarBean.setType(type);
+        whCalendarBean.setBeginFormat(beginFormat);
+        whCalendarBean.setEndFormat(endFormat);
+
+        Toast.makeText(this, beginFormat + "~" + endFormat, Toast.LENGTH_SHORT).show();
+
+        // 构造返回intent
+//        Intent intent = new Intent();
+//        intent.putExtra(WhCalendarBean.class.getName(), whCalendarBean);
+//        setResult(RESULT_OK, intent);
+//        finish();
     }
 }

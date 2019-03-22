@@ -32,7 +32,7 @@ class DayOfWeekView @JvmOverloads constructor(
         paintDayOfWeek.isAntiAlias = true
         paintDayOfWeek.textSize = context.dp2px(12f).toFloat()
         paintDayOfWeek.textAlign = Paint.Align.CENTER
-        paintDayOfWeek.color = resources.getColor(R.color.color_blue_4657)
+        paintDayOfWeek.color = resources.getColor(R.color.calendar_color_blue_4657)
         paintDayOfWeek.style = Paint.Style.FILL
     }
 

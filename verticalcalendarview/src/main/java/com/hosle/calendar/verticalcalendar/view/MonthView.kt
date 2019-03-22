@@ -38,7 +38,7 @@ class MonthView @JvmOverloads constructor(
     private var paddedHeight = 0
     private var cellWidth = 0
     private var cellHeight = 0
-    private var monthHeight = context.dp2px(20f)
+    private var monthHeight = context.dp2px(40f)
     private var cellBgSize = context.dp2px(48f) //选中日期蓝色背景size
     private var monthLabelPaddingRight = context.dp2px(10f)
 
@@ -166,6 +166,10 @@ class MonthView @JvmOverloads constructor(
         if (!isValidDayOfMonth(day) /*|| !isDayEnabled(day)*/) {
             return false
         }
+        // 日期在当天后面,不允许点击
+        if (dayAfterToday(day)) {
+            return false
+        }
 
         onDayClickListener?.run {
             val date = Calendar.getInstance()
@@ -256,7 +260,11 @@ class MonthView @JvmOverloads constructor(
         val monthLabelString = "${calendar.get(Calendar.YEAR)}年${calendar.get(Calendar.MONTH) + 1}月"
 
         val x = canvas.width / 2 - paintMonth.measureText(monthLabelString) / 2
-        val y = monthHeight.toFloat()
+
+        // 使文字垂直区域居中绘制
+        val fontMetrics = paintMonth.fontMetrics
+        val fontHeight = fontMetrics.bottom - fontMetrics.top // 计算文字高度
+        val y = monthHeight - (monthHeight - fontHeight) / 2 - fontMetrics.bottom // 计算文字baseline 
 
         canvas.drawText(monthLabelString, x, y, paintMonth)
     }
@@ -280,28 +288,29 @@ class MonthView @JvmOverloads constructor(
             val dayString: String
 
             when {
-                day == today -> {
-                    dayString = "今天"
-                    paintText.color = resources.getColor(android.R.color.white)
-                    paintTag.color = resources.getColor(R.color.color_blue_ABFF)
-                    //选中日期画蓝色背景
-                    canvas.drawRect(colCenter - cellBgSize / 2f, rowCenter - cellBgSize / 2f,
-                            colCenter + cellBgSize / 2f, rowCenter + cellBgSize / 2f, paintCellBg)
-                }
+            //todo 选中样式
+//                day == today -> {
+//                    dayString = "今天"
+//                    paintText.color = resources.getColor(android.R.color.white)
+//                    paintTag.color = resources.getColor(R.color.calendar_color_blue_ABFF)
+//                    //选中日期画蓝色背景
+//                    canvas.drawRect(colCenter - cellBgSize / 2f, rowCenter - cellBgSize / 2f,
+//                            colCenter + cellBgSize / 2f, rowCenter + cellBgSize / 2f, paintCellBg)
+//                }
                 dayAfterToday(day) -> {
                     dayString = day.toString()
-                    paintText.color = resources.getColor(R.color.color_99_white)
-                    paintTag.color = resources.getColor(R.color.color_blue_ABFF)
+                    paintText.color = resources.getColor(R.color.calendar_color_99_white)
+                    paintTag.color = resources.getColor(R.color.calendar_color_blue_ABFF)
                 }
                 isWeekend(day) -> {
                     dayString = day.toString()
-                    paintText.color = resources.getColor(R.color.color_weekend_blue)
-                    paintTag.color = resources.getColor(R.color.color_blue_ABFF)
+                    paintText.color = resources.getColor(R.color.calendar_color_weekend_blue)
+                    paintTag.color = resources.getColor(R.color.calendar_color_blue_ABFF)
                 }
                 else -> {
                     dayString = day.toString()
-                    paintText.color = resources.getColor(R.color.color_white)
-                    paintTag.color = resources.getColor(R.color.color_66_white)
+                    paintText.color = resources.getColor(R.color.calendar_color_white)
+                    paintTag.color = resources.getColor(R.color.calendar_color_66_white)
                 }
             }
 
@@ -374,19 +383,19 @@ class MonthView @JvmOverloads constructor(
         paintMonth.isAntiAlias = true
         paintMonth.textSize = context.dp2px(14f).toFloat()
         paintMonth.textAlign = Paint.Align.LEFT
-        paintMonth.color = resources.getColor(R.color.color_white)
+        paintMonth.color = resources.getColor(R.color.calendar_color_white)
 
         paintCell.isAntiAlias = true
         // 默认黑色,周末时间设置为白色
-        paintCell.color = resources.getColor(R.color.color_white)
+        paintCell.color = resources.getColor(R.color.calendar_color_white)
         paintCell.textSize = context.dp2px(16f).toFloat()
         paintCell.textAlign = Paint.Align.CENTER
 
         paintCellBg.isAntiAlias = true
         // 默认蓝色,周末时间设置为白色
-        paintCellBg.color = resources.getColor(R.color.color_weekend_blue)
+        paintCellBg.color = resources.getColor(R.color.calendar_color_weekend_blue)
 
-        paintTaskTag.color = resources.getColor(R.color.color_blue_ABFF)
+        paintTaskTag.color = resources.getColor(R.color.calendar_color_blue_ABFF)
         paintTaskTag.isAntiAlias = true
     }
 

@@ -21,6 +21,24 @@ import java.util.List;
  */
 public class TimeFormatUtils {
 
+    //初始化按天选择日历数据
+    public static Integer[][] getDayData(int initYear) {
+        Calendar calendar = Calendar.getInstance();
+        int currentYear = calendar.get(Calendar.YEAR);
+        int currentMonth = calendar.get(Calendar.MONTH);
+        calendar.set(initYear, 0, 1);
+
+        int count = (currentYear - initYear) * 12 + currentMonth + 2;
+        Integer[][] resultList = new Integer[count][2];
+
+        for (int i = 0; i < count; i++) {
+            resultList[i][0] = calendar.get(Calendar.YEAR);
+            resultList[i][1] = calendar.get(Calendar.MONTH) + 1;
+            calendar.add(Calendar.MONTH, 1);
+        }
+        return resultList;
+    }
+
     //生成按周计算的数据
     public static List<WeekBeanV3> getWeekData(int initYear) {
 //        int initYear = 2015;
@@ -33,8 +51,8 @@ public class TimeFormatUtils {
             return weekBeans;
         }
         int yearLength = currentYear - initYear;
-        for (int i = 0; i < yearLength; i++) {
-            int year = initYear + 1 + i;
+        for (int i = 0; i <= yearLength; i++) {
+            int year = initYear + i;
             WeekBeanV3 weekBean = new WeekBeanV3();
             weekBean.year = year + "";
 
@@ -71,6 +89,7 @@ public class TimeFormatUtils {
                     startTime = getFirstDayOfWeek(year, j);
                     endTime = getLastDayOfWeek(year, j);
                 }
+                weekDateBean.year = weekBean.year;
                 weekDateBean.week = String.valueOf(j + 1);
                 weekDateBean.endDate = year + "-" + endTime;
                 weekDateBean.startDate = year + "-" + startTime;
@@ -190,7 +209,72 @@ public class TimeFormatUtils {
         return df.format(c.get(Calendar.MONTH) + 1) + "-" + df.format(c.get(Calendar.DAY_OF_MONTH));
     }
 
+    // 获取当前年份格式化字符串
+    public static String getCurrentYear() {
+        Calendar cal = Calendar.getInstance();
+        return new SimpleDateFormat("yyyy").format(cal.getTime());
+    }
+
+    // 获取当前周是本年度第几周
+    public static int getWeekOfCurrentYear() {
+        Calendar c=Calendar.getInstance();
+        return c.get(Calendar.WEEK_OF_YEAR);
+    }
+
+    // 获取当月第一天格式化字符串
+    public static String getFirstDayOfMonth() {
+        Calendar cDay = Calendar.getInstance();
+        cDay.setTime(new Date());
+        cDay.set(Calendar.DAY_OF_MONTH, 1);
+        SimpleDateFormat createTimeSdf1 = new SimpleDateFormat("yyyy-MM-dd");
+        return createTimeSdf1.format(cDay.getTime());
+    }
+
+    // 获取当月最后一天格式化字符串
+    public static String getEndDayOfMonth() {
+        SimpleDateFormat createTimeSdf1 = new SimpleDateFormat("yyyy-MM-dd");
+        Calendar ca = Calendar.getInstance();
+        ca.set(Calendar.DAY_OF_MONTH, ca.getActualMaximum(Calendar.DAY_OF_MONTH));
+        return createTimeSdf1.format(ca.getTime());
+    }
+
+    // 获取当前年份-月份格式化字符串
+    public static String getThisMonth() {
+        SimpleDateFormat createTimeSdf = new SimpleDateFormat("yyyy-M");
+        return createTimeSdf.format(new Date());
+    }
+
+    // 获取昨天的格式化字符串
+    public static String getLastDay() {
+        Calendar cal = Calendar.getInstance();
+        cal.add(Calendar.DATE, -1);
+        return new SimpleDateFormat("yyyy-MM-dd").format(cal.getTime());
+    }
+
+    // 获取本周第一天的格式化字符串
+    public static String getWeekFirstDay() {
+        DecimalFormat df = new DecimalFormat("00");
+        Calendar c = new GregorianCalendar();
+        c.setFirstDayOfWeek(Calendar.SUNDAY);
+        c.setTime(new Date());
+        c.set(Calendar.DAY_OF_WEEK, c.getFirstDayOfWeek()); // Monday
+        return c.get(Calendar.YEAR)+"-"+df.format(c.get(Calendar.MONTH) + 1) + "-" + df.format(c.get(Calendar.DAY_OF_MONTH));
+    }
+
+    // 获取本周最后一天的格式化字符串
+    public static String getWeekEndDay() {
+        DecimalFormat df = new DecimalFormat("00");
+        Calendar c = new GregorianCalendar();
+        c.setFirstDayOfWeek(Calendar.SUNDAY);
+        c.setTime(new Date());
+        c.set(Calendar.DAY_OF_WEEK, c.getFirstDayOfWeek() + 6); // Sunday
+        return c.get(Calendar.YEAR) + "-" + df.format(c.get(Calendar.MONTH) + 1) + "-" + df.format(c.get(Calendar.DAY_OF_MONTH));
+    }
+
     public static Calendar timeStrToCalendar(String timeStr) {
+        if (timeStr == null) {
+            return null;
+        }
         SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd");
         try {
             Date date = sdf.parse(timeStr);
@@ -201,5 +285,19 @@ public class TimeFormatUtils {
             e.printStackTrace();
         }
         return null;
+    }
+
+    public static long formatTimeToMill(String timeStr) {
+        if (timeStr == null) {
+            return 0;
+        }
+        SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd");
+        long mills = 0;
+        try {
+            mills = sdf.parse(timeStr).getTime();
+        } catch (ParseException e) {
+            e.printStackTrace();
+        }
+        return mills;
     }
 }

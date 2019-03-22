@@ -15,7 +15,7 @@ import com.wehotel.calendar.bean.WeekDateBeanV3;
 /**
  * Created by kejie.yuan
  * Date: 2019/3/20
- * Description: ${DESCRIPTION}
+ * Description: 联动列表工具类
  */
 public class LinkageScrollUtil {
 
