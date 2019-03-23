@@ -11,6 +11,7 @@ import com.wehotel.calendar.bean.BaseTitleBean;
 import com.wehotel.calendar.bean.BaseValueBean;
 import com.wehotel.calendar.bean.WeekBeanV3;
 import com.wehotel.calendar.bean.WeekDateBeanV3;
+import com.wehotel.calendar.view.SuctionTopDecoration;
 
 /**
  * Created by kejie.yuan
@@ -47,5 +48,8 @@ public class LinkageScrollUtil {
                 }
             }
         });
+        //无侵入式粘性头部
+        SuctionTopDecoration suctionTopDecoration = new SuctionTopDecoration(valueRv.getContext());
+        valueRv.addItemDecoration(suctionTopDecoration);
     }
 }

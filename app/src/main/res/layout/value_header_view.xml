@@ -3,10 +3,10 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:id="@+id/header_text"
     android:layout_width="match_parent"
-    android:layout_height="28dp"
-    android:background="#F8F8F8"
+    android:layout_height="@dimen/calendar_value_header_height"
+    android:background="@color/calendar_value_header_bg_color"
     android:gravity="center_vertical"
-    android:paddingLeft="12dp"
+    android:paddingLeft="@dimen/calendar_value_header_padding_left"
     tools:text="2018年"
-    android:textColor="#999999"
-    android:textSize="12dp" />
+    android:textColor="@color/calendar_color_99_white"
+    android:textSize="@dimen/calendar_value_header_text_size" />
