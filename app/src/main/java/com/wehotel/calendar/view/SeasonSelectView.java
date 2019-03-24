@@ -69,7 +69,7 @@ public class SeasonSelectView extends ConstraintLayout {
         valueList = (RecyclerView) findViewById(R.id.value_rv);
 
         titleList.setLayoutManager(new LinearLayoutManager(context, LinearLayoutManager.VERTICAL, false));
-        valueList.setLayoutManager(new LinearLayoutManager(context, LinearLayoutManager.VERTICAL, false));
+        valueList.setLayoutManager(new LinearLayoutManagerWithScrollTop(context, LinearLayoutManager.VERTICAL, false));
 
         titleAdapter = new BaseTitleAdapter<>(titleBeans);
         titleList.setAdapter(titleAdapter);

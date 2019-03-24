@@ -31,7 +31,7 @@ class SuctionTopDecoration(val context: Context) : RecyclerView.ItemDecoration()
         textPaint.color = res.getColor(R.color.calendar_color_99_white)
         textPaint.textAlign = Paint.Align.LEFT
 
-        x = textPaddingLeft.toFloat()
+        x = textPaddingLeft
 
         // 使文字垂直区域居中绘制
         val fontMetrics = textPaint.fontMetrics
