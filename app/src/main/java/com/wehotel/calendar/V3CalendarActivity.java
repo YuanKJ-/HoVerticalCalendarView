@@ -1,7 +1,6 @@
 package com.wehotel.calendar;
 
 import android.content.Context;
-import android.content.Intent;
 import android.graphics.Color;
 import android.support.v4.view.ViewPager;
 import android.support.v7.app.AppCompatActivity;
@@ -17,6 +16,7 @@ import com.wehotel.calendar.bean.WhCalendarBean;
 import com.wehotel.calendar.enums.TimeTypeEnum;
 import com.wehotel.calendar.listener.DateSelectCallback;
 import com.wehotel.calendar.util.TimeFormatUtils;
+import com.wehotel.calendar.util.XStatusBarCompat;
 import com.wehotel.calendar.view.MonthSelectView;
 import com.wehotel.calendar.view.SeasonSelectView;
 import com.wehotel.calendar.view.WeekSelectView;
@@ -34,10 +34,6 @@ import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.List;
 
-import io.reactivex.Completable;
-import io.reactivex.CompletableEmitter;
-import io.reactivex.CompletableObserver;
-import io.reactivex.CompletableOnSubscribe;
 import io.reactivex.Single;
 import io.reactivex.SingleEmitter;
 import io.reactivex.SingleObserver;
@@ -46,6 +42,7 @@ import io.reactivex.android.schedulers.AndroidSchedulers;
 import io.reactivex.disposables.CompositeDisposable;
 import io.reactivex.disposables.Disposable;
 import io.reactivex.schedulers.Schedulers;
+import qiu.niorgai.StatusBarCompat;
 
 /**
  * Created by kejie.yuan
@@ -71,6 +68,8 @@ public class V3CalendarActivity extends AppCompatActivity implements View.OnClic
         initBtn();
         initViewPager();
         initMagicIndicator();
+        XStatusBarCompat.setStatusBarColor(this, Color.WHITE);
+        XStatusBarCompat.changeToLightStatusBar(this);
     }
 
     @Override
