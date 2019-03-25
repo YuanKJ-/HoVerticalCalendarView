@@ -4,6 +4,7 @@ import android.content.Context
 import android.content.res.Resources
 import android.graphics.Canvas
 import android.graphics.Paint
+import android.support.v7.widget.LinearLayoutManager
 import android.support.v7.widget.RecyclerView
 import android.text.TextPaint
 import com.hosle.vertical_calendar.demo.R
@@ -46,11 +47,12 @@ class SuctionTopDecoration(val context: Context) : RecyclerView.ItemDecoration()
         var actualY = y
 
         if(parent.childCount > 2) {
-            val firstView = parent.getChildAt(0)
-            val secondView = parent.getChildAt(1)
+            // 获取列表可见位置的第一第二个item index
+            val firstIndex = (parent.layoutManager as LinearLayoutManager).findFirstVisibleItemPosition()
+            val secondIndex = firstIndex + 1
 
-            val firstIndex = parent.getChildAdapterPosition(firstView)
-            val secondIndex = parent.getChildAdapterPosition(secondView)
+            val firstView = (parent.layoutManager as LinearLayoutManager).findViewByPosition(firstIndex)
+            val secondView = (parent.layoutManager as LinearLayoutManager).findViewByPosition(secondIndex)
 
             val valueAdapter = parent.adapter as BaseValueAdapter<*, *>
             val firstValueBean = valueAdapter.getItem(firstIndex)
@@ -60,7 +62,7 @@ class SuctionTopDecoration(val context: Context) : RecyclerView.ItemDecoration()
             // 如果第一个item和第二个item年份不相等,decoration需要跟随上移,否则固定
             if (firstValueBean?.year != secondValueBean?.year) {
                 var topOffset = 0f
-                if (secondView.top <= headerHeight) {
+                if (secondView != null && secondView.top <= headerHeight) {
                     topOffset = headerHeight - secondView.top
                     actualY -= topOffset
                 }
@@ -70,8 +72,6 @@ class SuctionTopDecoration(val context: Context) : RecyclerView.ItemDecoration()
                 c.drawRect(0f, 0f, c.width.toFloat(), headerHeight, paint)
                 c.drawText(text, x, actualY, textPaint)
             }
-
-
         }
 
     }

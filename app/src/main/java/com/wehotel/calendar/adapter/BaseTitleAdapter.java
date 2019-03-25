@@ -14,7 +14,6 @@ import java.util.List;
  */
 public class BaseTitleAdapter<T extends BaseTitleBean, K extends BaseViewHolder> extends BaseQuickAdapter<T, K> {
     private String selectedYear;
-    private boolean force;//点击强行指定title选中状态
 
     public BaseTitleAdapter(List<T> data) {
         super(R.layout.year_item, data);
@@ -37,15 +36,9 @@ public class BaseTitleAdapter<T extends BaseTitleBean, K extends BaseViewHolder>
 
     public void setSelectedYear(String selectedYear) {
         this.selectedYear = selectedYear;
-        this.force = true;
     }
 
     public void updateSelectedPos(int pos) {
-        if (force) {
-            //点击title列表滚动时忽略首次滚动回调,对于smoothScroll无效
-            force = false;
-            return;
-        }
         T item = getItem(pos);
         if (item != null && !item.year.equals(selectedYear)) {
             selectedYear = item.year;
