@@ -36,6 +36,7 @@ public class BaseTitleAdapter<T extends BaseTitleBean, K extends BaseViewHolder>
 
     public void setSelectedYear(String selectedYear) {
         this.selectedYear = selectedYear;
+        notifyDataSetChanged();
     }
 
     public void updateSelectedPos(int pos) {

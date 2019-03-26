@@ -10,11 +10,8 @@ import com.wehotel.calendar.adapter.BaseTitleAdapter;
 import com.wehotel.calendar.adapter.BaseValueAdapter;
 import com.wehotel.calendar.bean.BaseTitleBean;
 import com.wehotel.calendar.bean.BaseValueBean;
-import com.wehotel.calendar.bean.WeekBeanV3;
-import com.wehotel.calendar.bean.WeekDateBeanV3;
 import com.wehotel.calendar.view.SuctionTopDecoration;
 
-import net.lucode.hackware.magicindicator.buildins.UIUtil;
 
 /**
  * Created by kejie.yuan
@@ -24,7 +21,7 @@ import net.lucode.hackware.magicindicator.buildins.UIUtil;
 public class LinkageScrollUtil {
 
     public static void bindLinkageScroll(RecyclerView titleRv, final RecyclerView valueRv) {
-        //初始化联合滚动效果
+        // 初始化联合滚动效果
         final SmoothPos smoothPos = new SmoothPos();
         // 向上滚动时先滚到targetItem的下面几个item，再缓动上去,向下同理
         final BaseTitleAdapter titleAdapter = (BaseTitleAdapter) titleRv.getAdapter();
@@ -35,9 +32,8 @@ public class LinkageScrollUtil {
                 if (item != null) {
                     smoothPos.mScrolling = true;
                     smoothMoveToPosition(valueRv, item.bindValuePosition, smoothPos);
-
+                    // 直接指定title列表选中item
                     titleAdapter.setSelectedYear(item.year);
-                    titleAdapter.notifyDataSetChanged();
                 }
             }
         });
@@ -63,9 +59,9 @@ public class LinkageScrollUtil {
 
             @Override
             public void onScrolled(RecyclerView recyclerView, int dx, int dy) {
-                //获取右侧列表的第一个可见Item的position
+                // 获取右侧列表的第一个可见Item的position
                 int topPosition = ((LinearLayoutManager) valueRv.getLayoutManager()).findFirstVisibleItemPosition();
-                // 如果此项对应的是左边的大类的index
+                // 如果列表不是滚动状态,更新此项对应的是左边的大类的index
                 BaseValueBean item = (BaseValueBean) valueAdapter.getItem(topPosition);
                 if (item != null && !smoothPos.mScrolling) {
                     int bindPos = item.bindTitlePosition;
