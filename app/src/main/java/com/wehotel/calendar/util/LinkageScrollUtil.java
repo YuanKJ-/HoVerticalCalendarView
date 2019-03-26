@@ -56,7 +56,6 @@ public class LinkageScrollUtil {
                         RecyclerView.SCROLL_STATE_DRAGGING == newState) {
                     // 缓动过程中手指突然触摸拖拽或rv进入idle状态,需要立刻取消滑动并重置状态
                     stopScrollIfNeed(valueRv, smoothPos);
-                    smoothPos.mScrolling = false;
                 }
             }
 
