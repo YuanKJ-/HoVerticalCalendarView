@@ -26,6 +26,8 @@ class MonthView @JvmOverloads constructor(
     private val DAYS_IN_WEEK = 7
     private val MAX_WEEKS_IN_MONTH = 6 //一个月最大周数是6天
 
+    private var primaryColor: Int = resources.getColor(R.color.calendar_default_primary_color)
+
     private val calendar = Calendar.getInstance()
     private var daysInMonth = 0
     private var month = 0
@@ -110,6 +112,12 @@ class MonthView @JvmOverloads constructor(
         }
 
         requestLayout()
+    }
+
+    fun setPrimaryColor(primaryColor: Int?) {
+        if (primaryColor != null) {
+            this.primaryColor = primaryColor
+        }
     }
 
     override fun onMeasure(widthMeasureSpec: Int, heightMeasureSpec: Int) {
@@ -300,12 +308,12 @@ class MonthView @JvmOverloads constructor(
                 dayAfterToday(day) -> {
                     dayString = day.toString()
                     paintText.color = resources.getColor(R.color.calendar_color_99_white)
-                    paintTag.color = resources.getColor(R.color.calendar_color_blue_ABFF)
+                    paintTag.color = primaryColor
                 }
                 isWeekend(day) -> {
                     dayString = day.toString()
-                    paintText.color = resources.getColor(R.color.calendar_color_weekend_blue)
-                    paintTag.color = resources.getColor(R.color.calendar_color_blue_ABFF)
+                    paintText.color = primaryColor
+                    paintTag.color = primaryColor
                 }
                 else -> {
                     dayString = day.toString()
@@ -393,9 +401,9 @@ class MonthView @JvmOverloads constructor(
 
         paintCellBg.isAntiAlias = true
         // 默认蓝色,周末时间设置为白色
-        paintCellBg.color = resources.getColor(R.color.calendar_color_weekend_blue)
+        paintCellBg.color = primaryColor
 
-        paintTaskTag.color = resources.getColor(R.color.calendar_color_blue_ABFF)
+        paintTaskTag.color = primaryColor
         paintTaskTag.isAntiAlias = true
     }
 

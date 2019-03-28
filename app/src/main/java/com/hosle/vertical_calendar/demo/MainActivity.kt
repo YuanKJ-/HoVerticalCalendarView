@@ -23,7 +23,7 @@ class MainActivity : AppCompatActivity() {
 
             }
 
-        }, { calendar ->
+        },null, { calendar ->
             run {
                 val dateString = "${calendar.get(Calendar.YEAR)}-${String.format("%02d", calendar.get(Calendar.MONTH) + 1)}-${String.format("%02d", calendar.get(Calendar.DAY_OF_MONTH))}"
 

@@ -113,7 +113,7 @@ class VerticalCalendarView @JvmOverloads constructor(
         return dy < 0
     }
 
-    fun setCalendarParams(monthArrange:Array<Array<Int>>,onDayClickListener: MonthView.OnDayClickListener?, operationForTaskCount:((Calendar) -> Int)? = null) {
+    fun setCalendarParams(monthArrange:Array<Array<Int>>,onDayClickListener: MonthView.OnDayClickListener?, primaryColor: Int?, operationForTaskCount:((Calendar) -> Int)? = null) {
         dateMonth = monthArrange
         //初始化month label
         tvMonthLabel.text = "${dateMonth[0][0]}年${dateMonth[0][1]}月"
@@ -124,7 +124,7 @@ class VerticalCalendarView @JvmOverloads constructor(
                 (recycler_view_calendar.layoutManager as LinearLayoutManager).scrollToPositionWithOffset(dateMonth.size - 2, 0)
             }
         })
-        setAdapter(CalendarAdapter(dateMonth, onDayClickListener,operationForTaskCount))
+        setAdapter(CalendarAdapter(dateMonth, onDayClickListener, primaryColor, operationForTaskCount))
     }
 
     fun setOndayClickListener(onDayClickListener: MonthView.OnDayClickListener?) {
@@ -139,9 +139,11 @@ class VerticalCalendarView @JvmOverloads constructor(
     }
 
 
-    class CalendarAdapter(val monthArange: Array<Array<Int>>, var onDayClickListener: MonthView.OnDayClickListener?,val operationForTaskCount:((Calendar) -> Int)? = null) : RecyclerView.Adapter<ViewHolder>() {
+    class CalendarAdapter(val monthArange: Array<Array<Int>>, var onDayClickListener: MonthView.OnDayClickListener?,
+                          val primaryColor: Int?, val operationForTaskCount:((Calendar) -> Int)? = null) : RecyclerView.Adapter<ViewHolder>() {
         override fun onCreateViewHolder(parent: ViewGroup?, viewType: Int): ViewHolder {
             val view = LayoutInflater.from(parent!!.context).inflate(R.layout.item_single_month, parent, false) as MonthView
+            view.setPrimaryColor(primaryColor)
             return ViewHolder(view)
         }
 

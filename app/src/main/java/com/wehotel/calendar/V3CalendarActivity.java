@@ -51,7 +51,9 @@ import qiu.niorgai.StatusBarCompat;
  */
 public class V3CalendarActivity extends AppCompatActivity implements View.OnClickListener, DateSelectCallback{
 
+    private static final String EXTRA_PRIMARY_COLOR = "primary_color";
     private static final int INIT_YEAR = 2015;
+    private int primaryColor;
     private CompositeDisposable compositeDisposable = new CompositeDisposable();
 
     private View backIcon;
@@ -65,6 +67,7 @@ public class V3CalendarActivity extends AppCompatActivity implements View.OnClic
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_calendar_v3);
+        initPrimaryColor();
         initBtn();
         initViewPager();
         initMagicIndicator();
@@ -76,6 +79,10 @@ public class V3CalendarActivity extends AppCompatActivity implements View.OnClic
     protected void onDestroy() {
         super.onDestroy();
         compositeDisposable.clear();
+    }
+
+    private void initPrimaryColor() {
+        primaryColor = getIntent().getIntExtra("primary_color", getResources().getColor(R.color.calendar_default_primary_color));
     }
 
     private void initBtn() {
@@ -142,7 +149,7 @@ public class V3CalendarActivity extends AppCompatActivity implements View.OnClic
                 indicator.setMode(LinePagerIndicator.MODE_EXACTLY);
                 indicator.setLineWidth(UIUtil.dip2px(V3CalendarActivity.this, 24)); //width 24dp
                 indicator.setLineHeight(UIUtil.dip2px(V3CalendarActivity.this, 2)); //height 2dp
-                indicator.setColors(Color.parseColor("#4F64FD"));
+                indicator.setColors(primaryColor);
                 return indicator;
             }
         });
@@ -180,7 +187,7 @@ public class V3CalendarActivity extends AppCompatActivity implements View.OnClic
                                         "-" + (day.get(Calendar.MONTH) + 1) + "-" + day.get(Calendar.DAY_OF_MONTH);
                                 onDateSelect(day.getTimeInMillis(), day.getTimeInMillis(), TimeTypeEnum.DAY.getType(), dateString, dateString);
                             }
-                        }, null);
+                        }, primaryColor, null);
                     }
 
                     @Override
