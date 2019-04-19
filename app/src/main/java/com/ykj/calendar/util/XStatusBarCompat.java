@@ -1,4 +1,4 @@
-package com.wehotel.calendar.util;
+package com.ykj.calendar.util;
 
 import android.app.Activity;
 import android.os.Build;

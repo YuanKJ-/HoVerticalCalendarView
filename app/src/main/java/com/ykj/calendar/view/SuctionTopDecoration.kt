@@ -1,4 +1,4 @@
-package com.wehotel.calendar.view
+package com.ykj.calendar.view
 
 import android.content.Context
 import android.content.res.Resources
@@ -8,7 +8,7 @@ import android.support.v7.widget.LinearLayoutManager
 import android.support.v7.widget.RecyclerView
 import android.text.TextPaint
 import com.hosle.vertical_calendar.demo.R
-import com.wehotel.calendar.adapter.BaseValueAdapter
+import com.ykj.calendar.adapter.BaseValueAdapter
 
 class SuctionTopDecoration(val context: Context) : RecyclerView.ItemDecoration() {
 

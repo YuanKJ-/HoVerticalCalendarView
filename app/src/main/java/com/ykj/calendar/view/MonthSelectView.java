@@ -1,4 +1,4 @@
-package com.wehotel.calendar.view;
+package com.ykj.calendar.view;
 
 import android.content.Context;
 import android.support.annotation.Nullable;
@@ -11,15 +11,15 @@ import android.view.View;
 import com.chad.library.adapter.base.BaseQuickAdapter;
 import com.chad.library.adapter.base.BaseViewHolder;
 import com.hosle.vertical_calendar.demo.R;
-import com.wehotel.calendar.adapter.BaseTitleAdapter;
-import com.wehotel.calendar.adapter.BaseValueAdapter;
-import com.wehotel.calendar.bean.BaseValueBean;
-import com.wehotel.calendar.bean.WeekBeanV3;
-import com.wehotel.calendar.bean.WeekDateBeanV3;
-import com.wehotel.calendar.enums.TimeTypeEnum;
-import com.wehotel.calendar.listener.DateSelectCallback;
-import com.wehotel.calendar.util.LinkageScrollUtil;
-import com.wehotel.calendar.util.TimeFormatUtils;
+import com.ykj.calendar.adapter.BaseTitleAdapter;
+import com.ykj.calendar.adapter.BaseValueAdapter;
+import com.ykj.calendar.bean.BaseTitleBean;
+import com.ykj.calendar.bean.BaseValueBean;
+import com.ykj.calendar.bean.MonthDataBeanV3;
+import com.ykj.calendar.enums.TimeTypeEnum;
+import com.ykj.calendar.listener.DateSelectCallback;
+import com.ykj.calendar.util.LinkageScrollUtil;
+import com.ykj.calendar.util.TimeFormatUtils;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -36,33 +36,33 @@ import io.reactivex.schedulers.Schedulers;
 /**
  * Created by kejie.yuan
  * Date: 2019/3/18
- * Description: 按周选择View
+ * Description: 按季度选择View
  */
-public class WeekSelectView extends ConstraintLayout {
-    private static final String TAG = "WeekSelectView";
+public class MonthSelectView extends ConstraintLayout {
+    private static final String TAG = "SeasonSelectView";
 
     private static final int INIT_YEAR = 2015;
 
-    private List<WeekBeanV3> titleBeans = new ArrayList<>();
-    private List<WeekDateBeanV3> valueBeans = new ArrayList<>();
+    private List<BaseTitleBean> titleBeans = new ArrayList<>();
+    private List<MonthDataBeanV3> valueBeans = new ArrayList<>();
 
     private RecyclerView titleList;
     private RecyclerView valueList;
 
-    private BaseTitleAdapter<WeekBeanV3, BaseViewHolder> titleAdapter;
+    private BaseTitleAdapter<BaseTitleBean, BaseViewHolder> titleAdapter;
     private ValueAdapter valueAdapter;
 
     private DateSelectCallback dateSelectCallback;
 
-    public WeekSelectView(Context context) {
+    public MonthSelectView(Context context) {
         this(context, null);
     }
 
-    public WeekSelectView(Context context, AttributeSet attrs) {
+    public MonthSelectView(Context context, AttributeSet attrs) {
         this(context, attrs, 0);
     }
 
-    public WeekSelectView(Context context, AttributeSet attrs, int defStyleAttr) {
+    public MonthSelectView(Context context, AttributeSet attrs, int defStyleAttr) {
         super(context, attrs, defStyleAttr);
         inflate(context, R.layout.linkage_rv_layout, this);
         titleList = (RecyclerView) findViewById(R.id.title_rv);
@@ -71,10 +71,10 @@ public class WeekSelectView extends ConstraintLayout {
         titleList.setLayoutManager(new LinearLayoutManager(context, LinearLayoutManager.VERTICAL, false));
         valueList.setLayoutManager(new LinearLayoutManagerWithScrollTop(context, LinearLayoutManager.VERTICAL, false));
 
-        titleAdapter = new BaseTitleAdapter<>(null);
+        titleAdapter = new BaseTitleAdapter<>(titleBeans);
         titleList.setAdapter(titleAdapter);
 
-        valueAdapter = new ValueAdapter(null);
+        valueAdapter = new ValueAdapter(valueBeans);
         valueList.setAdapter(valueAdapter);
 
         //绑定日期点击事件结果回调
@@ -82,7 +82,6 @@ public class WeekSelectView extends ConstraintLayout {
 
         //绑定联合滚动
         LinkageScrollUtil.bindLinkageScroll(titleList, valueList);
-
     }
 
     public void generateDataSync(final CompositeDisposable compositeDisposable) {
@@ -116,26 +115,27 @@ public class WeekSelectView extends ConstraintLayout {
                 });
     }
 
-    private void generateData(List<WeekBeanV3> titleBeans, List<WeekDateBeanV3> valueBeans) {
-        //生成源数据
-        List<WeekBeanV3> sourceData = TimeFormatUtils.getWeekData(INIT_YEAR);
-        //生成titleBeans数据
-        titleBeans.addAll(sourceData);
-        //生成valueBeans数据并绑定pos
-        for (int i = 0; i < titleBeans.size(); i++) {
-            WeekBeanV3 weekBean = titleBeans.get(i);
-            List<WeekDateBeanV3> dateBeans = weekBean.weekDateBeanList;
-            //value列表分组头部绑定title分组pos
-            WeekDateBeanV3 weekHeader = new WeekDateBeanV3(weekBean.year);
-            weekHeader.bindTitlePosition = i;
-            valueBeans.add(weekHeader);
-            //title分组绑定value分组头部pos
-            weekBean.bindValuePosition = valueBeans.size() - 1;
-            for (WeekDateBeanV3 dateBeanV3 : dateBeans) {
-                dateBeanV3.bindTitlePosition = i;
-                dateBeanV3.initShowData();
-                valueBeans.add(dateBeanV3);
+    private void generateData(List<BaseTitleBean> titleBeans, List<MonthDataBeanV3> valueBeans) {
+        //生成month原始数据
+        List<MonthDataBeanV3> sourceData = TimeFormatUtils.getMonthData(INIT_YEAR);
+        //生成month title 和 value 数据
+        String currentGenerateYear = "";
+        for (int i = 0; i < sourceData.size(); i++) {
+            MonthDataBeanV3 seasonDate = sourceData.get(i);
+            if (!seasonDate.year.equals(currentGenerateYear)) {
+                currentGenerateYear = seasonDate.year;
+                //生成titleBean
+                BaseTitleBean baseTitleBean = new BaseTitleBean();
+                baseTitleBean.year = currentGenerateYear;
+                baseTitleBean.bindValuePosition = valueBeans.size();
+                titleBeans.add(baseTitleBean);
+                //生成valueBean头部
+                MonthDataBeanV3 seasonHeader = new MonthDataBeanV3(currentGenerateYear);
+                seasonHeader.bindTitlePosition = titleBeans.size() - 1;
+                valueBeans.add(seasonHeader);
             }
+            seasonDate.bindTitlePosition = titleBeans.size() - 1;
+            valueBeans.add(seasonDate);
         }
     }
 
@@ -143,13 +143,13 @@ public class WeekSelectView extends ConstraintLayout {
         valueAdapter.setOnItemClickListener(new BaseQuickAdapter.OnItemClickListener() {
             @Override
             public void onItemClick(BaseQuickAdapter adapter, View view, int position) {
-                WeekDateBeanV3 weekDateBean = (WeekDateBeanV3) adapter.getItem(position);
-                if (weekDateBean != null && weekDateBean.type == BaseValueBean.ITEM_TYPE && dateSelectCallback != null) {
+                MonthDataBeanV3 monthDataBean = (MonthDataBeanV3) adapter.getItem(position);
+                if (monthDataBean != null && monthDataBean.type == BaseValueBean.ITEM_TYPE && dateSelectCallback != null) {
                     //startDate 和 endDate 转成毫秒数据回调
-                    long beginDate = TimeFormatUtils.formatTimeToMill(weekDateBean.startDate);
-                    long endDate = TimeFormatUtils.formatTimeToMill(weekDateBean.endDate);
-                    String beginFormat = weekDateBean.year + "-" + weekDateBean.week;
-                    dateSelectCallback.onDateSelect(beginDate, endDate, TimeTypeEnum.WEEK.getType(), beginFormat, beginFormat);
+                    long beginDate = TimeFormatUtils.formatTimeToMill(monthDataBean.startDate);
+                    long endDate = TimeFormatUtils.formatTimeToMill(monthDataBean.endDate);
+                    String beginFormat = monthDataBean.year + "-" + monthDataBean.month;
+                    dateSelectCallback.onDateSelect(beginDate, endDate, TimeTypeEnum.MONTH.getType(), beginFormat, beginFormat);
                 }
             }
         });
@@ -159,20 +159,20 @@ public class WeekSelectView extends ConstraintLayout {
         this.dateSelectCallback = dateSelectCallback;
     }
 
-    private static class ValueAdapter extends BaseValueAdapter<WeekDateBeanV3, BaseViewHolder> {
+    private static class ValueAdapter extends BaseValueAdapter<MonthDataBeanV3, BaseViewHolder> {
 
-        ValueAdapter(@Nullable List<WeekDateBeanV3> data) {
+        ValueAdapter(@Nullable List<MonthDataBeanV3> data) {
             super(data);
         }
 
         @Override
-        protected void convert(BaseViewHolder helper, WeekDateBeanV3 item) {
+        protected void convert(BaseViewHolder helper, MonthDataBeanV3 item) {
             super.convert(helper, item);
-            if (item.type == WeekDateBeanV3.ITEM_TYPE) {
-                helper.setText(R.id.primary_text, item.showWeek);
-                helper.setText(R.id.sub_text, item.showDate);
+            if (item.type == BaseValueBean.ITEM_TYPE) {
+                helper.setText(R.id.primary_text, item.month + "月");
+                helper.setGone(R.id.sub_text, false);
                 if (helper.getAdapterPosition() == 1) {
-                    helper.setText(R.id.current_tips, "本周");
+                    helper.setText(R.id.current_tips, "本月");
                     helper.setVisible(R.id.current_tips, true);
                 } else {
                     helper.setGone(R.id.current_tips, false);
@@ -181,4 +181,6 @@ public class WeekSelectView extends ConstraintLayout {
             }
         }
     }
+
+
 }

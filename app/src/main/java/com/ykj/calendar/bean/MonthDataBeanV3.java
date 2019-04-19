@@ -1,4 +1,4 @@
-package com.wehotel.calendar.bean;
+package com.ykj.calendar.bean;
 
 /**
  * Created by kejie.yuan

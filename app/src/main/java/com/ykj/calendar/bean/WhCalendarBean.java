@@ -1,4 +1,4 @@
-package com.wehotel.calendar.bean;
+package com.ykj.calendar.bean;
 
 import android.os.Parcel;
 import android.os.Parcelable;

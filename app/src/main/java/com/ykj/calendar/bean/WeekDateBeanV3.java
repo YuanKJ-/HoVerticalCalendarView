@@ -1,6 +1,6 @@
-package com.wehotel.calendar.bean;
+package com.ykj.calendar.bean;
 
-import com.wehotel.calendar.util.TimeFormatUtils;
+import com.ykj.calendar.util.TimeFormatUtils;
 
 import java.util.Calendar;
 

@@ -1,9 +1,9 @@
-package com.wehotel.calendar.util;
+package com.ykj.calendar.util;
 
-import com.wehotel.calendar.bean.MonthDataBeanV3;
-import com.wehotel.calendar.bean.SeasonDateBeanV3;
-import com.wehotel.calendar.bean.WeekBeanV3;
-import com.wehotel.calendar.bean.WeekDateBeanV3;
+import com.ykj.calendar.bean.MonthDataBeanV3;
+import com.ykj.calendar.bean.SeasonDateBeanV3;
+import com.ykj.calendar.bean.WeekBeanV3;
+import com.ykj.calendar.bean.WeekDateBeanV3;
 
 import java.text.DecimalFormat;
 import java.text.ParseException;

@@ -1,4 +1,4 @@
-package com.wehotel.calendar.adapter;
+package com.ykj.calendar.adapter;
 
 import android.support.annotation.Nullable;
 
@@ -6,7 +6,7 @@ import com.chad.library.adapter.base.BaseQuickAdapter;
 import com.chad.library.adapter.base.BaseViewHolder;
 import com.chad.library.adapter.base.util.MultiTypeDelegate;
 import com.hosle.vertical_calendar.demo.R;
-import com.wehotel.calendar.bean.BaseValueBean;
+import com.ykj.calendar.bean.BaseValueBean;
 
 import java.util.List;
 

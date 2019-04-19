@@ -5,7 +5,7 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:orientation="vertical"
-    tools:context="com.wehotel.calendar.V3CalendarActivity">
+    tools:context="com.ykj.calendar.V3CalendarActivity">
 
     <!-- ToolBar -->
     <RelativeLayout

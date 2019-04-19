@@ -1,9 +1,9 @@
-package com.wehotel.calendar.adapter;
+package com.ykj.calendar.adapter;
 
 import com.chad.library.adapter.base.BaseQuickAdapter;
 import com.chad.library.adapter.base.BaseViewHolder;
 import com.hosle.vertical_calendar.demo.R;
-import com.wehotel.calendar.bean.BaseTitleBean;
+import com.ykj.calendar.bean.BaseTitleBean;
 
 import java.util.List;
 

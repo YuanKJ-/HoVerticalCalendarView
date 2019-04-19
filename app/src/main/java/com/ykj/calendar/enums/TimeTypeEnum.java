@@ -1,4 +1,4 @@
-package com.wehotel.calendar.enums;
+package com.ykj.calendar.enums;
 
 /**
  * Created by fulushan on 2019/1/23.

@@ -1,4 +1,4 @@
-package com.wehotel.calendar.listener;
+package com.ykj.calendar.listener;
 
 /**
  * Created by kejie.yuan
@@ -11,7 +11,7 @@ public interface DateSelectCallback {
      * 选中日期回调
      * @param beginDate 开始时间,毫秒级
      * @param endDate 结束时间,毫秒级
-     * @param type 选中日期类型, {@link com.wehotel.calendar.enums.TimeTypeEnum}
+     * @param type 选中日期类型, {@link com.ykj.calendar.enums.TimeTypeEnum}
      * @param beginFormat 选中日期format数据
      *                    根据type区分显示
      *                    DAY: 2019-03-30  (选中2019年3月30日)
