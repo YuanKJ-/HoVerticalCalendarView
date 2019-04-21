@@ -11,9 +11,9 @@ import android.view.View;
 import com.chad.library.adapter.base.BaseQuickAdapter;
 import com.chad.library.adapter.base.BaseViewHolder;
 import com.hosle.vertical_calendar.demo.R;
-import com.ykj.calendar.adapter.BaseTitleAdapter;
-import com.ykj.calendar.adapter.BaseValueAdapter;
-import com.ykj.calendar.bean.BaseValueBean;
+import com.ykj.calendar.adapter.HeaderValueAdapter;
+import com.ykj.calendar.adapter.YearTitleAdapter;
+import com.ykj.calendar.bean.HeaderValueBean;
 import com.ykj.calendar.bean.WeekBeanV3;
 import com.ykj.calendar.bean.WeekDateBeanV3;
 import com.ykj.calendar.enums.TimeTypeEnum;
@@ -49,7 +49,7 @@ public class WeekSelectView extends ConstraintLayout {
     private RecyclerView titleList;
     private RecyclerView valueList;
 
-    private BaseTitleAdapter<WeekBeanV3, BaseViewHolder> titleAdapter;
+    private YearTitleAdapter titleAdapter;
     private ValueAdapter valueAdapter;
 
     private DateSelectCallback dateSelectCallback;
@@ -71,7 +71,7 @@ public class WeekSelectView extends ConstraintLayout {
         titleList.setLayoutManager(new LinearLayoutManager(context, LinearLayoutManager.VERTICAL, false));
         valueList.setLayoutManager(new LinearLayoutManagerWithScrollTop(context, LinearLayoutManager.VERTICAL, false));
 
-        titleAdapter = new BaseTitleAdapter<>(null);
+        titleAdapter = new YearTitleAdapter(null);
         titleList.setAdapter(titleAdapter);
 
         valueAdapter = new ValueAdapter(null);
@@ -127,12 +127,12 @@ public class WeekSelectView extends ConstraintLayout {
             List<WeekDateBeanV3> dateBeans = weekBean.weekDateBeanList;
             //value列表分组头部绑定title分组pos
             WeekDateBeanV3 weekHeader = new WeekDateBeanV3(weekBean.year);
-            weekHeader.bindTitlePosition = i;
+            weekHeader.bindPosition = i;
             valueBeans.add(weekHeader);
             //title分组绑定value分组头部pos
-            weekBean.bindValuePosition = valueBeans.size() - 1;
+            weekBean.bindPosition = valueBeans.size() - 1;
             for (WeekDateBeanV3 dateBeanV3 : dateBeans) {
-                dateBeanV3.bindTitlePosition = i;
+                dateBeanV3.bindPosition = i;
                 dateBeanV3.initShowData();
                 valueBeans.add(dateBeanV3);
             }
@@ -144,7 +144,7 @@ public class WeekSelectView extends ConstraintLayout {
             @Override
             public void onItemClick(BaseQuickAdapter adapter, View view, int position) {
                 WeekDateBeanV3 weekDateBean = (WeekDateBeanV3) adapter.getItem(position);
-                if (weekDateBean != null && weekDateBean.type == BaseValueBean.ITEM_TYPE && dateSelectCallback != null) {
+                if (weekDateBean != null && weekDateBean.type == HeaderValueBean.ITEM_TYPE && dateSelectCallback != null) {
                     //startDate 和 endDate 转成毫秒数据回调
                     long beginDate = TimeFormatUtils.formatTimeToMill(weekDateBean.startDate);
                     long endDate = TimeFormatUtils.formatTimeToMill(weekDateBean.endDate);
@@ -159,7 +159,7 @@ public class WeekSelectView extends ConstraintLayout {
         this.dateSelectCallback = dateSelectCallback;
     }
 
-    private static class ValueAdapter extends BaseValueAdapter<WeekDateBeanV3, BaseViewHolder> {
+    private static class ValueAdapter extends HeaderValueAdapter<WeekDateBeanV3, BaseViewHolder> {
 
         ValueAdapter(@Nullable List<WeekDateBeanV3> data) {
             super(data);

@@ -5,7 +5,7 @@ package com.ykj.calendar.bean;
  * Date: 2019/3/20
  * Description: 按季度数据ValueBean
  */
-public class SeasonDateBeanV3 extends BaseValueBean {
+public class SeasonDateBeanV3 extends HeaderValueBean {
 
     public String season;
     public String startDate;

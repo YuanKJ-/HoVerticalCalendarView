@@ -11,11 +11,11 @@ import android.view.View;
 import com.chad.library.adapter.base.BaseQuickAdapter;
 import com.chad.library.adapter.base.BaseViewHolder;
 import com.hosle.vertical_calendar.demo.R;
-import com.ykj.calendar.adapter.BaseTitleAdapter;
-import com.ykj.calendar.adapter.BaseValueAdapter;
-import com.ykj.calendar.bean.BaseTitleBean;
-import com.ykj.calendar.bean.BaseValueBean;
+import com.ykj.calendar.adapter.HeaderValueAdapter;
+import com.ykj.calendar.adapter.YearTitleAdapter;
+import com.ykj.calendar.bean.HeaderValueBean;
 import com.ykj.calendar.bean.MonthDataBeanV3;
+import com.ykj.calendar.bean.YearTitleBean;
 import com.ykj.calendar.enums.TimeTypeEnum;
 import com.ykj.calendar.listener.DateSelectCallback;
 import com.ykj.calendar.util.LinkageScrollUtil;
@@ -43,13 +43,13 @@ public class MonthSelectView extends ConstraintLayout {
 
     private static final int INIT_YEAR = 2015;
 
-    private List<BaseTitleBean> titleBeans = new ArrayList<>();
+    private List<YearTitleBean> titleBeans = new ArrayList<>();
     private List<MonthDataBeanV3> valueBeans = new ArrayList<>();
 
     private RecyclerView titleList;
     private RecyclerView valueList;
 
-    private BaseTitleAdapter<BaseTitleBean, BaseViewHolder> titleAdapter;
+    private YearTitleAdapter titleAdapter;
     private ValueAdapter valueAdapter;
 
     private DateSelectCallback dateSelectCallback;
@@ -71,7 +71,7 @@ public class MonthSelectView extends ConstraintLayout {
         titleList.setLayoutManager(new LinearLayoutManager(context, LinearLayoutManager.VERTICAL, false));
         valueList.setLayoutManager(new LinearLayoutManagerWithScrollTop(context, LinearLayoutManager.VERTICAL, false));
 
-        titleAdapter = new BaseTitleAdapter<>(titleBeans);
+        titleAdapter = new YearTitleAdapter(titleBeans);
         titleList.setAdapter(titleAdapter);
 
         valueAdapter = new ValueAdapter(valueBeans);
@@ -115,7 +115,7 @@ public class MonthSelectView extends ConstraintLayout {
                 });
     }
 
-    private void generateData(List<BaseTitleBean> titleBeans, List<MonthDataBeanV3> valueBeans) {
+    private void generateData(List<YearTitleBean> titleBeans, List<MonthDataBeanV3> valueBeans) {
         //生成month原始数据
         List<MonthDataBeanV3> sourceData = TimeFormatUtils.getMonthData(INIT_YEAR);
         //生成month title 和 value 数据
@@ -125,16 +125,16 @@ public class MonthSelectView extends ConstraintLayout {
             if (!seasonDate.year.equals(currentGenerateYear)) {
                 currentGenerateYear = seasonDate.year;
                 //生成titleBean
-                BaseTitleBean baseTitleBean = new BaseTitleBean();
+                YearTitleBean baseTitleBean = new YearTitleBean();
                 baseTitleBean.year = currentGenerateYear;
-                baseTitleBean.bindValuePosition = valueBeans.size();
+                baseTitleBean.bindPosition = valueBeans.size();
                 titleBeans.add(baseTitleBean);
                 //生成valueBean头部
                 MonthDataBeanV3 seasonHeader = new MonthDataBeanV3(currentGenerateYear);
-                seasonHeader.bindTitlePosition = titleBeans.size() - 1;
+                seasonHeader.bindPosition = titleBeans.size() - 1;
                 valueBeans.add(seasonHeader);
             }
-            seasonDate.bindTitlePosition = titleBeans.size() - 1;
+            seasonDate.bindPosition = titleBeans.size() - 1;
             valueBeans.add(seasonDate);
         }
     }
@@ -144,7 +144,7 @@ public class MonthSelectView extends ConstraintLayout {
             @Override
             public void onItemClick(BaseQuickAdapter adapter, View view, int position) {
                 MonthDataBeanV3 monthDataBean = (MonthDataBeanV3) adapter.getItem(position);
-                if (monthDataBean != null && monthDataBean.type == BaseValueBean.ITEM_TYPE && dateSelectCallback != null) {
+                if (monthDataBean != null && monthDataBean.type == HeaderValueBean.ITEM_TYPE && dateSelectCallback != null) {
                     //startDate 和 endDate 转成毫秒数据回调
                     long beginDate = TimeFormatUtils.formatTimeToMill(monthDataBean.startDate);
                     long endDate = TimeFormatUtils.formatTimeToMill(monthDataBean.endDate);
@@ -159,7 +159,7 @@ public class MonthSelectView extends ConstraintLayout {
         this.dateSelectCallback = dateSelectCallback;
     }
 
-    private static class ValueAdapter extends BaseValueAdapter<MonthDataBeanV3, BaseViewHolder> {
+    private static class ValueAdapter extends HeaderValueAdapter<MonthDataBeanV3, BaseViewHolder> {
 
         ValueAdapter(@Nullable List<MonthDataBeanV3> data) {
             super(data);
@@ -168,7 +168,7 @@ public class MonthSelectView extends ConstraintLayout {
         @Override
         protected void convert(BaseViewHolder helper, MonthDataBeanV3 item) {
             super.convert(helper, item);
-            if (item.type == BaseValueBean.ITEM_TYPE) {
+            if (item.type == HeaderValueBean.ITEM_TYPE) {
                 helper.setText(R.id.primary_text, item.month + "月");
                 helper.setGone(R.id.sub_text, false);
                 if (helper.getAdapterPosition() == 1) {

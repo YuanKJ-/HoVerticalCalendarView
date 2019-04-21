@@ -8,7 +8,7 @@ import android.support.v7.widget.LinearLayoutManager
 import android.support.v7.widget.RecyclerView
 import android.text.TextPaint
 import com.hosle.vertical_calendar.demo.R
-import com.ykj.calendar.adapter.BaseValueAdapter
+import com.ykj.calendar.adapter.HeaderValueAdapter
 
 class SuctionTopDecoration(val context: Context) : RecyclerView.ItemDecoration() {
 
@@ -54,13 +54,13 @@ class SuctionTopDecoration(val context: Context) : RecyclerView.ItemDecoration()
             val firstView = (parent.layoutManager as LinearLayoutManager).findViewByPosition(firstIndex)
             val secondView = (parent.layoutManager as LinearLayoutManager).findViewByPosition(secondIndex)
 
-            val valueAdapter = parent.adapter as BaseValueAdapter<*, *>
+            val valueAdapter = parent.adapter as HeaderValueAdapter<*, *>
             val firstValueBean = valueAdapter.getItem(firstIndex)
             val secondValueBean = valueAdapter.getItem(secondIndex)
 
             val text = "${firstValueBean?.year}年"
-            // 如果第一个item和第二个item年份不相等,decoration需要跟随上移,否则固定
-            if (firstValueBean?.year != secondValueBean?.year) {
+            // 如果第一个item和第二个item的绑定位置不相等,decoration需要跟随上移,否则固定
+            if (firstValueBean?.bindPosition != secondValueBean?.bindPosition) {
                 var topOffset = 0f
                 if (secondView != null && secondView.top <= headerHeight) {
                     topOffset = headerHeight - secondView.top

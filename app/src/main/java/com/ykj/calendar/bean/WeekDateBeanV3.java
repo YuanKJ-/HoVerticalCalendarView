@@ -4,7 +4,7 @@ import com.ykj.calendar.util.TimeFormatUtils;
 
 import java.util.Calendar;
 
-public class WeekDateBeanV3 extends BaseValueBean{
+public class WeekDateBeanV3 extends HeaderValueBean{
 
     public String week; //本年第几周
     public String startDate; //本周起始日期

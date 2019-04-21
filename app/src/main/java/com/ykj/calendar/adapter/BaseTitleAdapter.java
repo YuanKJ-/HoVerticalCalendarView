@@ -1,9 +1,10 @@
 package com.ykj.calendar.adapter;
 
+import android.support.annotation.Nullable;
+
 import com.chad.library.adapter.base.BaseQuickAdapter;
 import com.chad.library.adapter.base.BaseViewHolder;
-import com.hosle.vertical_calendar.demo.R;
-import com.ykj.calendar.bean.BaseTitleBean;
+import com.ykj.calendar.bean.BaseBindPositionBean;
 
 import java.util.List;
 
@@ -12,38 +13,19 @@ import java.util.List;
  * Date: 2019/3/20
  * Description: 联动列表左侧title列表adapter基类
  */
-public class BaseTitleAdapter<T extends BaseTitleBean, K extends BaseViewHolder> extends BaseQuickAdapter<T, K> {
-    private String selectedYear;
+public abstract class BaseTitleAdapter<T extends BaseBindPositionBean, K extends BaseViewHolder> extends BaseQuickAdapter<T, K> {
 
-    public BaseTitleAdapter(List<T> data) {
-        super(R.layout.year_item, data);
-        if (data != null && data.size() > 0) {
-            selectedYear = data.get(0).year;
-        }
+    public BaseTitleAdapter(int layoutResId, @Nullable List<T> data) {
+        super(layoutResId, data);
     }
 
-    @Override
-    protected void convert(K helper, T item) {
-        String text = item.year + "年";
-        helper.setText(R.id.year_text, text);
-        if (item.year.equals(selectedYear)) {
-            //设置选中
-            helper.setBackgroundColor(R.id.year_text, mContext.getResources().getColor(android.R.color.white));
-        } else {
-            helper.setBackgroundColor(R.id.year_text, mContext.getResources().getColor(android.R.color.transparent));
-        }
+    public BaseTitleAdapter(@Nullable List<T> data) {
+        super(data);
     }
 
-    public void setSelectedYear(String selectedYear) {
-        this.selectedYear = selectedYear;
-        notifyDataSetChanged();
+    public BaseTitleAdapter(int layoutResId) {
+        super(layoutResId);
     }
 
-    public void updateSelectedPos(int pos) {
-        T item = getItem(pos);
-        if (item != null && !item.year.equals(selectedYear)) {
-            selectedYear = item.year;
-            notifyDataSetChanged();
-        }
-    }
+    public abstract void updateSelectedPos(int pos);
 }

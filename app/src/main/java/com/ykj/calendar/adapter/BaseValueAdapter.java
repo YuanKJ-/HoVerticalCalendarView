@@ -4,9 +4,7 @@ import android.support.annotation.Nullable;
 
 import com.chad.library.adapter.base.BaseQuickAdapter;
 import com.chad.library.adapter.base.BaseViewHolder;
-import com.chad.library.adapter.base.util.MultiTypeDelegate;
-import com.hosle.vertical_calendar.demo.R;
-import com.ykj.calendar.bean.BaseValueBean;
+import com.ykj.calendar.bean.BaseBindPositionBean;
 
 import java.util.List;
 
@@ -15,26 +13,17 @@ import java.util.List;
  * Date: 2019/3/20
  * Description: 联动列表右侧value列表adapter基类
  */
-public abstract class BaseValueAdapter<T extends BaseValueBean, K extends BaseViewHolder> extends BaseQuickAdapter<T, K> {
+public abstract class BaseValueAdapter<T extends BaseBindPositionBean, K extends BaseViewHolder> extends BaseQuickAdapter<T, K> {
+
+    public BaseValueAdapter(int layoutResId, @Nullable List<T> data) {
+        super(layoutResId, data);
+    }
 
     public BaseValueAdapter(@Nullable List<T> data) {
         super(data);
-        setMultiTypeDelegate(new MultiTypeDelegate<T>() {
-            @Override
-            protected int getItemType(T entity) {
-                //根据你的实体类来判断布局类型
-                return entity.type;
-            }
-        });
-        getMultiTypeDelegate()
-                .registerItemType(T.HEADER_TYPE, R.layout.value_header_view)
-                .registerItemType(T.ITEM_TYPE, R.layout.value_item_view);
     }
 
-    @Override
-    protected void convert(K helper, T item) {
-        if (item.type == T.HEADER_TYPE) {
-            helper.setText(R.id.header_text, item.year + "年");
-        }
+    public BaseValueAdapter(int layoutResId) {
+        super(layoutResId);
     }
 }

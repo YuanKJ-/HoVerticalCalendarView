@@ -11,11 +11,11 @@ import android.view.View;
 import com.chad.library.adapter.base.BaseQuickAdapter;
 import com.chad.library.adapter.base.BaseViewHolder;
 import com.hosle.vertical_calendar.demo.R;
-import com.ykj.calendar.adapter.BaseTitleAdapter;
-import com.ykj.calendar.adapter.BaseValueAdapter;
-import com.ykj.calendar.bean.BaseTitleBean;
-import com.ykj.calendar.bean.BaseValueBean;
+import com.ykj.calendar.adapter.HeaderValueAdapter;
+import com.ykj.calendar.adapter.YearTitleAdapter;
+import com.ykj.calendar.bean.HeaderValueBean;
 import com.ykj.calendar.bean.SeasonDateBeanV3;
+import com.ykj.calendar.bean.YearTitleBean;
 import com.ykj.calendar.enums.TimeTypeEnum;
 import com.ykj.calendar.listener.DateSelectCallback;
 import com.ykj.calendar.util.LinkageScrollUtil;
@@ -43,13 +43,13 @@ public class SeasonSelectView extends ConstraintLayout {
 
     private static final int INIT_YEAR = 2015;
 
-    private List<BaseTitleBean> titleBeans = new ArrayList<>();
+    private List<YearTitleBean> titleBeans = new ArrayList<>();
     private List<SeasonDateBeanV3> valueBeans = new ArrayList<>();
 
     private RecyclerView titleList;
     private RecyclerView valueList;
 
-    private BaseTitleAdapter<BaseTitleBean, BaseViewHolder> titleAdapter;
+    private YearTitleAdapter titleAdapter;
     private ValueAdapter valueAdapter;
 
     private DateSelectCallback dateSelectCallback;
@@ -71,7 +71,7 @@ public class SeasonSelectView extends ConstraintLayout {
         titleList.setLayoutManager(new LinearLayoutManager(context, LinearLayoutManager.VERTICAL, false));
         valueList.setLayoutManager(new LinearLayoutManagerWithScrollTop(context, LinearLayoutManager.VERTICAL, false));
 
-        titleAdapter = new BaseTitleAdapter<>(titleBeans);
+        titleAdapter = new YearTitleAdapter(titleBeans);
         titleList.setAdapter(titleAdapter);
 
         valueAdapter = new ValueAdapter(valueBeans);
@@ -115,7 +115,7 @@ public class SeasonSelectView extends ConstraintLayout {
                 });
     }
 
-    private void generateData(List<BaseTitleBean> titleBeans, List<SeasonDateBeanV3> valueBeans) {
+    private void generateData(List<YearTitleBean> titleBeans, List<SeasonDateBeanV3> valueBeans) {
         //生成season原始数据
         List<SeasonDateBeanV3> sourceDatas = TimeFormatUtils.getSeasonData(INIT_YEAR);
         //生成season title 和 value 数据
@@ -125,16 +125,16 @@ public class SeasonSelectView extends ConstraintLayout {
             if (!seasonDate.year.equals(currentGenerateYear)) {
                 currentGenerateYear = seasonDate.year;
                 //生成titleBean
-                BaseTitleBean baseTitleBean = new BaseTitleBean();
+                YearTitleBean baseTitleBean = new YearTitleBean();
                 baseTitleBean.year = currentGenerateYear;
-                baseTitleBean.bindValuePosition = valueBeans.size();
+                baseTitleBean.bindPosition = valueBeans.size();
                 titleBeans.add(baseTitleBean);
                 //生成valueBean头部
                 SeasonDateBeanV3 seasonHeader = new SeasonDateBeanV3(currentGenerateYear);
-                seasonHeader.bindTitlePosition = titleBeans.size() - 1;
+                seasonHeader.bindPosition = titleBeans.size() - 1;
                 valueBeans.add(seasonHeader);
             }
-            seasonDate.bindTitlePosition = titleBeans.size() - 1;
+            seasonDate.bindPosition = titleBeans.size() - 1;
             valueBeans.add(seasonDate);
         }
     }
@@ -144,7 +144,7 @@ public class SeasonSelectView extends ConstraintLayout {
             @Override
             public void onItemClick(BaseQuickAdapter adapter, View view, int position) {
                 SeasonDateBeanV3 seasonDateBean = (SeasonDateBeanV3) adapter.getItem(position);
-                if (seasonDateBean != null && seasonDateBean.type == BaseValueBean.ITEM_TYPE && dateSelectCallback != null) {
+                if (seasonDateBean != null && seasonDateBean.type == HeaderValueBean.ITEM_TYPE && dateSelectCallback != null) {
                     //startDate 和 endDate 转成毫秒数据回调
                     long beginDate = TimeFormatUtils.formatTimeToMill(seasonDateBean.startDate);
                     long endDate = TimeFormatUtils.formatTimeToMill(seasonDateBean.endDate);
@@ -159,7 +159,7 @@ public class SeasonSelectView extends ConstraintLayout {
         this.dateSelectCallback = dateSelectCallback;
     }
 
-    private static class ValueAdapter extends BaseValueAdapter<SeasonDateBeanV3, BaseViewHolder> {
+    private static class ValueAdapter extends HeaderValueAdapter<SeasonDateBeanV3, BaseViewHolder> {
 
         ValueAdapter(@Nullable List<SeasonDateBeanV3> data) {
             super(data);
@@ -168,7 +168,7 @@ public class SeasonSelectView extends ConstraintLayout {
         @Override
         protected void convert(BaseViewHolder helper, SeasonDateBeanV3 item) {
             super.convert(helper, item);
-            if (item.type == BaseValueBean.ITEM_TYPE) {
+            if (item.type == HeaderValueBean.ITEM_TYPE) {
                 helper.setText(R.id.primary_text, "第" + item.season + "季度");
                 helper.setGone(R.id.sub_text, false);
                 if (helper.getAdapterPosition() == 1) {

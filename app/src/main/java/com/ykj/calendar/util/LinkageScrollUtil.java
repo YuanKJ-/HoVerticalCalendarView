@@ -8,8 +8,7 @@ import android.view.ViewTreeObserver;
 import com.chad.library.adapter.base.BaseQuickAdapter;
 import com.ykj.calendar.adapter.BaseTitleAdapter;
 import com.ykj.calendar.adapter.BaseValueAdapter;
-import com.ykj.calendar.bean.BaseTitleBean;
-import com.ykj.calendar.bean.BaseValueBean;
+import com.ykj.calendar.bean.BaseBindPositionBean;
 import com.ykj.calendar.view.SuctionTopDecoration;
 
 
@@ -31,14 +30,14 @@ public class LinkageScrollUtil {
         titleAdapter.setOnItemClickListener(new BaseQuickAdapter.OnItemClickListener() {
             @Override
             public void onItemClick(BaseQuickAdapter adapter, View view, int position) {
-                BaseTitleBean item = (BaseTitleBean) titleAdapter.getItem(position);
+                BaseBindPositionBean item = (BaseBindPositionBean) titleAdapter.getItem(position);
                 if (item != null) {
                     // 点击时立刻取消上一次滑动并重置状态
                     stopScrollIfNeed(valueRv, smoothPos);
                     smoothPos.mScrolling = true;
-                    smoothMoveToPosition(valueRv, item.bindValuePosition, smoothPos);
+                    smoothMoveToPosition(valueRv, item.bindPosition, smoothPos);
                     // 直接指定title列表选中item
-                    titleAdapter.setSelectedYear(item.year);
+                    titleAdapter.updateSelectedPos(position);
                 }
             }
         });
@@ -136,9 +135,9 @@ public class LinkageScrollUtil {
         // 获取右侧列表的第一个可见Item的position
         int topPosition = ((LinearLayoutManager) valRv.getLayoutManager()).findFirstVisibleItemPosition();
         // 如果列表不是滚动状态,更新此项对应的是左边的大类的index
-        BaseValueBean item = (BaseValueBean) valAdapter.getItem(topPosition);
+        BaseBindPositionBean item = (BaseBindPositionBean) valAdapter.getItem(topPosition);
         if (item != null && !scrolling) {
-            int bindPos = item.bindTitlePosition;
+            int bindPos = item.bindPosition;
             titleAdapter.updateSelectedPos(bindPos);
         }
     }
