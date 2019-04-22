@@ -10,17 +10,6 @@
         android:layout_marginTop="40dp"
         android:background="@color/calendar_color_bg" />
 
-    <TextView
-        android:id="@+id/tv_month_label"
-        android:layout_width="match_parent"
-        android:layout_height="40dp"
-        android:layout_marginTop="40dp"
-        android:background="@color/calendar_color_bg"
-        android:gravity="center"
-        android:textColor="@color/calendar_color_white"
-        tools:text="2018年12月"
-        android:textSize="14dp" />
-
     <com.hosle.calendar.verticalcalendar.view.DayOfWeekView
         android:id="@+id/header_day_of_week"
         android:layout_width="match_parent"

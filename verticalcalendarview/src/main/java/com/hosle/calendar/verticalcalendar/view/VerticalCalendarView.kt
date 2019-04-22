@@ -25,19 +25,8 @@ class VerticalCalendarView @JvmOverloads constructor(
 
     private var dateMonth : Array<Array<Int>> = arrayOf()
 
-    private var firstVisibleItemPosition = 0
-    private val tvMonthLabel: TextView
-
-    private val monthLabelHeight = context.dp2px(40f)
-
-    private var initialTopOfMonthLabel: Int = Int.MIN_VALUE
-    private var initialBottomOfMonthLabel: Int = Int.MIN_VALUE
-    private var initialLeftOfMonthLabel: Int = Int.MIN_VALUE
-    private var initialRightOfMonthLabel: Int = Int.MIN_VALUE
-
     init {
         initView(context)
-        tvMonthLabel = tv_month_label
 
     }
 
@@ -47,65 +36,12 @@ class VerticalCalendarView @JvmOverloads constructor(
         initRecyclerView()
     }
 
-    override fun onLayout(changed: Boolean, left: Int, top: Int, right: Int, bottom: Int) {
-        super.onLayout(changed, left, top, right, bottom)
-        if (initialTopOfMonthLabel == Int.MIN_VALUE)
-            initialTopOfMonthLabel = tvMonthLabel.top
-        if (initialBottomOfMonthLabel == Int.MIN_VALUE)
-            initialBottomOfMonthLabel = tvMonthLabel.bottom
-        if (initialLeftOfMonthLabel == Int.MIN_VALUE)
-            initialLeftOfMonthLabel = tvMonthLabel.left
-        if (initialRightOfMonthLabel == Int.MIN_VALUE)
-            initialRightOfMonthLabel = tvMonthLabel.right
-    }
-
     private fun initRecyclerView() {
-
 
         recycler_view_calendar.apply {
             layoutManager = LinearLayoutManager(context, LinearLayoutManager.VERTICAL, false)
 
-            addOnScrollListener(object : RecyclerView.OnScrollListener() {
-
-                override fun onScrolled(recyclerView: RecyclerView?, dx: Int, dy: Int) {
-                    super.onScrolled(recyclerView, dx, dy)
-
-                    val layoutManager = recyclerView!!.layoutManager as LinearLayoutManager
-                    val _firstVisibleItemPosition = layoutManager.findFirstVisibleItemPosition()
-                    val firstVisibleMonthView = recyclerView.findViewHolderForLayoutPosition(_firstVisibleItemPosition).itemView as MonthView
-
-                    if (_firstVisibleItemPosition != firstVisibleItemPosition) {
-                        firstVisibleItemPosition = _firstVisibleItemPosition
-
-                        tvMonthLabel.text = "${firstVisibleMonthView.getYear()}年${firstVisibleMonthView.getMonth()}月"
-
-
-                        if (isGoingDown(dy)) {
-                            tvMonthLabel.layout(initialLeftOfMonthLabel, initialTopOfMonthLabel - monthLabelHeight, initialRightOfMonthLabel, initialBottomOfMonthLabel - monthLabelHeight)
-                        } else {
-                            tvMonthLabel.layout(initialLeftOfMonthLabel, initialTopOfMonthLabel, initialRightOfMonthLabel, initialBottomOfMonthLabel)
-                        }
-
-                    } else {
-                        val nextMonthView = recyclerView.findViewHolderForLayoutPosition(firstVisibleItemPosition + 1).itemView as MonthView
-
-                        val targetTop: Int
-                        val targetBottom: Int
-
-                        if (nextMonthView.top <= monthLabelHeight) {
-
-                            targetTop = Math.min(tvMonthLabel.top - dy, initialTopOfMonthLabel)
-                            targetBottom = Math.min(tvMonthLabel.bottom - dy, initialBottomOfMonthLabel)
-
-                        } else {
-                            targetTop = initialTopOfMonthLabel
-                            targetBottom = initialBottomOfMonthLabel
-                        }
-                        tvMonthLabel.layout(initialLeftOfMonthLabel, targetTop, initialRightOfMonthLabel, targetBottom)
-
-                    }
-                }
-            })
+            addItemDecoration(MonthSuctionTopDecoration(context)) //插入decoration无侵入式吸顶效果
         }
     }
 
@@ -115,8 +51,6 @@ class VerticalCalendarView @JvmOverloads constructor(
 
     fun setCalendarParams(monthArrange:Array<Array<Int>>,onDayClickListener: MonthView.OnDayClickListener?, primaryColor: Int?, operationForTaskCount:((Calendar) -> Int)? = null) {
         dateMonth = monthArrange
-        //初始化month label
-        tvMonthLabel.text = "${dateMonth[0][0]}年${dateMonth[0][1]}月"
         //刷新完成后自动定位到当前月份
         viewTreeObserver.addOnGlobalLayoutListener(object : ViewTreeObserver.OnGlobalLayoutListener {
             override fun onGlobalLayout() {
