@@ -40,7 +40,8 @@ class MonthView @JvmOverloads constructor(
     private var paddedHeight = 0
     private var cellWidth = 0
     private var cellHeight = 0
-    private var monthHeight = context.dp2px(40f)
+    private var monthHeight = resources.getDimension(R.dimen.month_suction_header_height) //顶部label的高度
+    private var monthLabelTextSize = resources.getDimension(R.dimen.month_suction_header_text_size) //顶部label的textSize
     private var cellBgSize = context.dp2px(48f) //选中日期蓝色背景size
     private var monthLabelPaddingRight = context.dp2px(10f)
 
@@ -127,7 +128,7 @@ class MonthView @JvmOverloads constructor(
 
         val preferredHeight = (cellHeight * getActualWeekInMonth()
                 + monthHeight
-                + paddingTop + paddingBottom)
+                + paddingTop + paddingBottom).toInt()
         val resolvedHeight = View.resolveSize(preferredHeight, heightMeasureSpec)
         setMeasuredDimension(widthMeasureSpec, resolvedHeight)
     }
@@ -195,7 +196,7 @@ class MonthView @JvmOverloads constructor(
             return -1
         }
 
-        val headerHeight = monthHeight /*+ dayOfWeekHeight*/
+        val headerHeight = monthHeight.toInt() /*+ dayOfWeekHeight*/
         val paddedY = y - paddingTop
         if (paddedY < headerHeight || paddedY >= paddedHeight) {
             return -1
@@ -389,7 +390,7 @@ class MonthView @JvmOverloads constructor(
 
     private fun initPaints(res: Resources) {
         paintMonth.isAntiAlias = true
-        paintMonth.textSize = context.dp2px(14f).toFloat()
+        paintMonth.textSize = monthLabelTextSize
         paintMonth.textAlign = Paint.Align.LEFT
         paintMonth.color = resources.getColor(R.color.calendar_color_white)
 
