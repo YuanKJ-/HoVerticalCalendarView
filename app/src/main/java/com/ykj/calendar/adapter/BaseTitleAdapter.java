@@ -27,5 +27,12 @@ public abstract class BaseTitleAdapter<T extends BaseBindPositionBean, K extends
         super(layoutResId);
     }
 
+    /**
+     * 子类实现该方法做高亮逻辑处理
+     * 点击title列表某一个item时会进入该回调
+     * 当value列表滑动时会进入该回调方法
+     * 需要注意recyclerView onScroll方法滑动时会一直触发,所以在方法内部需要判断pos是否与当前高亮pos相同,相同则不做处理,优化性能
+     * @param pos 被选中高亮的item位置
+     */
     public abstract void updateSelectedPos(int pos);
 }
