@@ -50,6 +50,8 @@ public class TimeFormatUtils {
 //            ToastUtil.show(MainApplication.context(), "系统时间有问题");
             return weekBeans;
         }
+        //由于华某为部分手机new Date()生成后立刻调用getWeekOfYear获取最大周数会出现最大周数不准确的问题,所以提前初始化Date
+        Date date = new Date();
         int yearLength = currentYear - initYear;
         for (int i = 0; i <= yearLength; i++) {
             int year = initYear + i;
@@ -63,7 +65,7 @@ public class TimeFormatUtils {
 
             int maxWeeks;
             if (year == currentYear) {//当前年
-                maxWeeks = getWeekOfYear(new Date());
+                maxWeeks = getWeekOfYear(date);
             } else {
                 maxWeeks = c.getActualMaximum(Calendar.WEEK_OF_YEAR);
             }
